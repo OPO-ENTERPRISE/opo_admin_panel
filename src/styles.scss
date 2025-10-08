@@ -1,0 +1,289 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Import Angular Material theme */
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+/* Dark theme variables */
+:root {
+  --primary-color: #3f51b5;
+  --accent-color: #ff4081;
+  --warn-color: #f44336;
+
+  /* Dark theme colors */
+  --bg-primary: #121212;
+  --bg-secondary: #1e1e1e;
+  --bg-tertiary: #2d2d2d;
+  --bg-card: rgba(255, 255, 255, 0.05);
+  --bg-card-hover: rgba(255, 255, 255, 0.08);
+  --bg-sidebar: rgba(0, 0, 0, 0.8);
+
+  /* Text colors */
+  --text-primary: rgba(255, 255, 255, 0.87);
+  --text-secondary: rgba(255, 255, 255, 0.6);
+  --text-disabled: rgba(255, 255, 255, 0.38);
+
+  /* Border colors */
+  --border-color: rgba(255, 255, 255, 0.12);
+  --border-hover: rgba(255, 255, 255, 0.2);
+
+  /* Shadow */
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.4);
+
+  /* Success and info colors */
+  --success-color: #4caf50;
+  --info-color: #2196f3;
+  --warning-color: #ff9800;
+}
+
+/* Global styles */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Roboto', 'Helvetica Neue', sans-serif;
+  overflow-x: hidden;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Material theme overrides for dark theme */
+.mat-mdc-card {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-color);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.mat-mdc-card:hover {
+  background-color: var(--bg-card-hover) !important;
+  box-shadow: var(--shadow-hover);
+}
+
+.mat-mdc-button {
+  backdrop-filter: blur(10px);
+}
+
+.mat-mdc-raised-button {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+  backdrop-filter: blur(10px);
+}
+
+.mat-mdc-outlined-button {
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+  backdrop-filter: blur(10px);
+}
+
+.mat-mdc-form-field {
+  .mat-mdc-text-field-wrapper {
+    background-color: var(--bg-card) !important;
+    backdrop-filter: blur(10px);
+  }
+
+  .mat-mdc-form-field-label {
+    color: var(--text-secondary) !important;
+  }
+
+  .mat-mdc-input-element {
+    color: var(--text-primary) !important;
+  }
+}
+
+.mat-mdc-table {
+  background-color: var(--bg-card) !important;
+  backdrop-filter: blur(10px);
+}
+
+.mat-mdc-header-row {
+  background-color: var(--bg-tertiary) !important;
+}
+
+.mat-mdc-row {
+  background-color: var(--bg-card) !important;
+}
+
+.mat-mdc-row:hover {
+  background-color: var(--bg-card-hover) !important;
+}
+
+.mat-mdc-header-cell,
+.mat-mdc-cell {
+  color: var(--text-primary) !important;
+  border-bottom-color: var(--border-color) !important;
+}
+
+.mat-mdc-paginator {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  backdrop-filter: blur(10px);
+}
+
+.mat-mdc-dialog-container {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  backdrop-filter: blur(20px);
+}
+
+.mat-mdc-snack-bar-container {
+  background-color: var(--bg-tertiary) !important;
+  color: var(--text-primary) !important;
+  backdrop-filter: blur(10px);
+}
+
+/* Sidebar styling */
+.sidebar {
+  background-color: var(--bg-sidebar) !important;
+  backdrop-filter: blur(20px);
+  border-right: 1px solid var(--border-color);
+}
+
+.sidebar-item {
+  color: var(--text-secondary) !important;
+  transition: all 0.3s ease;
+}
+
+.sidebar-item:hover {
+  color: var(--text-primary) !important;
+  background-color: var(--bg-card-hover) !important;
+}
+
+.sidebar-item.active {
+  color: var(--primary-color) !important;
+  background-color: var(--bg-card) !important;
+}
+
+/* Header styling */
+.header {
+  background-color: var(--bg-sidebar) !important;
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Dashboard cards */
+.dashboard-card {
+  background-color: var(--bg-card) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.dashboard-card:hover {
+  background-color: var(--bg-card-hover) !important;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* Status indicators */
+.status-enabled {
+  color: var(--success-color) !important;
+}
+
+.status-disabled {
+  color: var(--warn-color) !important;
+}
+
+.status-pending {
+  color: var(--warning-color) !important;
+}
+
+/* Loading spinner */
+.mat-mdc-progress-spinner {
+  --mdc-circular-progress-active-indicator-color: var(--primary-color);
+}
+
+/* Custom utility classes */
+.text-primary { color: var(--text-primary) !important; }
+.text-secondary { color: var(--text-secondary) !important; }
+.text-disabled { color: var(--text-disabled) !important; }
+
+.bg-primary { background-color: var(--bg-primary) !important; }
+.bg-secondary { background-color: var(--bg-secondary) !important; }
+.bg-tertiary { background-color: var(--bg-tertiary) !important; }
+.bg-card { background-color: var(--bg-card) !important; }
+
+.border-primary { border-color: var(--border-color) !important; }
+
+.shadow { box-shadow: var(--shadow) !important; }
+.shadow-hover { box-shadow: var(--shadow-hover) !important; }
+
+.backdrop-blur { backdrop-filter: blur(10px); }
+.backdrop-blur-lg { backdrop-filter: blur(20px); }
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .mat-mdc-card {
+    margin: 8px;
+  }
+
+  .sidebar {
+    width: 100% !important;
+  }
+}
+
+/* Animation classes */
+.fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+/* Focus styles */
+.mat-mdc-button:focus,
+.mat-mdc-raised-button:focus,
+.mat-mdc-outlined-button:focus {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+  .sidebar,
+  .header,
+  .mat-mdc-button {
+    display: none !important;
+  }
+
+  .mat-mdc-card {
+    background-color: white !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+}

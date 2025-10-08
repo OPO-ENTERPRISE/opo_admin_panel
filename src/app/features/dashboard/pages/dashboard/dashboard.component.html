@@ -1,0 +1,103 @@
+<div class="dashboard-container">
+  <!-- Loading Spinner -->
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Cargando dashboard...</p>
+  </div>
+  <!-- Dashboard Content -->
+  <div class="dashboard-content" *ngIf="!isLoading">
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+      <h1 class="welcome-title">¡Bienvenido, {{ currentUser?.name }}!</h1>
+      <p class="welcome-subtitle">Panel de administración del sistema de tests de oposiciones</p>
+    </div>
+    <!-- Areas Stats Grid -->
+    <div class="areas-grid">
+      <!-- Card por cada área -->
+      <mat-card *ngFor="let areaStats of areasStats" class="area-card">
+        <!-- Header del Área -->
+        <mat-card-header class="area-header">
+          <div class="area-title-section">
+            <mat-icon class="area-icon">{{ getAreaIcon(areaStats.areaId) }}</mat-icon>
+            <mat-card-title class="area-title">{{ areaStats.areaName }}</mat-card-title>
+          </div>
+        </mat-card-header>
+        <mat-card-content>
+          <!-- Sección Topics -->
+          <div class="stats-section">
+            <div class="section-header">
+              <mat-icon class="section-icon">topic</mat-icon>
+              <h3 class="section-title">Topics</h3>
+            </div>
+            <div class="stats-grid">
+              <div class="stat-box primary">
+                <div class="stat-value">{{ areaStats.topics.total }}</div>
+                <div class="stat-label">Total</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-value">{{ areaStats.topics.mainTopics }}</div>
+                <div class="stat-label">Principales</div>
+              </div>
+              <div class="stat-box">
+                <div class="stat-value">{{ areaStats.topics.subtopics }}</div>
+                <div class="stat-label">Subtemas</div>
+              </div>
+              <div class="stat-box success">
+                <div class="stat-value">{{ areaStats.topics.enabled }}</div>
+                <div class="stat-label">Habilitados</div>
+              </div>
+              <div class="stat-box warn">
+                <div class="stat-value">{{ areaStats.topics.disabled }}</div>
+                <div class="stat-label">Deshabilitados</div>
+              </div>
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+          <!-- Sección Usuarios -->
+          <div class="stats-section">
+            <div class="section-header">
+              <mat-icon class="section-icon">people</mat-icon>
+              <h3 class="section-title">Usuarios</h3>
+            </div>
+            <div class="stats-grid users-grid">
+              <div class="stat-box primary">
+                <div class="stat-value">{{ areaStats.users.total }}</div>
+                <div class="stat-label">Total</div>
+              </div>
+              <div class="stat-box success">
+                <div class="stat-value">{{ areaStats.users.enabled }}</div>
+                <div class="stat-label">Habilitados</div>
+              </div>
+              <div class="stat-box warn">
+                <div class="stat-value">{{ areaStats.users.disabled }}</div>
+                <div class="stat-label">Deshabilitados</div>
+              </div>
+            </div>
+          </div>
+          <mat-divider></mat-divider>
+          <!-- Acciones Rápidas -->
+          <div class="actions-section">
+            <button mat-raised-button [color]="getAreaColor(areaStats.areaId)"
+              (click)="onManageTopics(areaStats.areaId)" class="action-button">
+              <mat-icon>topic</mat-icon> Gestionar Topics </button>
+            <button mat-raised-button [color]="getAreaColor(areaStats.areaId)" (click)="onManageUsers(areaStats.areaId)"
+              class="action-button">
+              <mat-icon>people</mat-icon> Ver Usuarios </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="!isLoading && areasStats.length === 0">
+      <mat-card class="empty-card">
+        <mat-card-content>
+          <mat-icon class="empty-icon">category</mat-icon>
+          <h3>No hay áreas configuradas</h3>
+          <p>No se encontraron áreas en el sistema.</p>
+          <button mat-raised-button color="primary" routerLink="/areas">
+            <mat-icon>add</mat-icon> Crear Primera Área </button>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+</div>

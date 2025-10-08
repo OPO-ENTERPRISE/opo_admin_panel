@@ -1,0 +1,158 @@
+<div class="topic-list-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <mat-icon>topic</mat-icon> Gestión de Topics
+      </h1>
+      <p class="page-subtitle"> Administra los temas y subtemas del sistema de tests </p>
+    </div>
+    <button mat-raised-button color="primary" (click)="onCreateTopic()" class="create-button">
+      <mat-icon>add</mat-icon> Nuevo Topic </button>
+  </div>
+  <!-- Filters -->
+  <mat-card class="filters-card">
+    <mat-card-content>
+      <div class="filters-grid">
+        <!-- Search -->
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Buscar topics</mat-label>
+          <input matInput [formControl]="searchControl" placeholder="Buscar por título...">
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+        <!-- Area Filter -->
+        <mat-form-field appearance="outline">
+          <mat-label>Área</mat-label>
+          <mat-select [formControl]="areaFilter">
+            <mat-option *ngFor="let option of areaOptions" [value]="option.value"> {{ option.label }} </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <!-- Status Filter -->
+        <mat-form-field appearance="outline">
+          <mat-label>Estado</mat-label>
+          <mat-select [formControl]="statusFilter">
+            <mat-option *ngFor="let option of statusOptions" [value]="option.value"> {{ option.label }} </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <!-- Premium Filter -->
+        <mat-form-field appearance="outline" *ngIf="premiumOptions">
+          <mat-label>Premium</mat-label>
+          <mat-select [formControl]="premiumFilter">
+            <mat-option *ngFor="let option of premiumOptions" [value]="option.value"> {{ option.label }} </mat-option>
+          </mat-select>
+        </mat-form-field>
+        <!-- Clear Filters -->
+        <button mat-stroked-button (click)="clearFilters()" class="clear-filters-button">
+          <mat-icon>clear</mat-icon> Limpiar </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  <!-- Topics Table -->
+  <mat-card class="table-card">
+    <mat-card-content>
+      <!-- Loading Spinner -->
+      <div class="loading-container" *ngIf="isLoading">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Cargando topics...</p>
+      </div>
+      <!-- Table -->
+      <div class="table-container" *ngIf="!isLoading">
+        <table mat-table [dataSource]="topics" class="topics-table">
+          <!-- Title Column -->
+          <ng-container matColumnDef="title">
+            <th mat-header-cell *matHeaderCellDef> Título </th>
+            <td mat-cell *matCellDef="let topic" class="title-cell">
+              <div class="topic-title" (click)="onTopicClick(topic)">
+                <mat-icon class="topic-icon">topic</mat-icon>
+                <div class="topic-info">
+                  <div class="topic-name">{{ topic.title }}</div>
+                  <div class="topic-description" *ngIf="topic.description"> {{ topic.description }} </div>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+          <!-- Area Column -->
+          <ng-container matColumnDef="area">
+            <th mat-header-cell *matHeaderCellDef> Área </th>
+            <td mat-cell *matCellDef="let topic">
+              <mat-chip-set>
+                <mat-chip [class]="'area-chip ' + (topic.area === '1' ? 'pn-chip' : 'ps-chip')"> {{
+                  getAreaName(topic.area) }} </mat-chip>
+              </mat-chip-set>
+            </td>
+          </ng-container>
+          <!-- Order Column -->
+          <ng-container matColumnDef="order">
+            <th mat-header-cell *matHeaderCellDef> Orden </th>
+            <td mat-cell *matCellDef="let topic">
+              <span class="order-badge">{{ topic.order }}</span>
+            </td>
+          </ng-container>
+          <!-- Enabled Column -->
+          <ng-container matColumnDef="enabled">
+            <th mat-header-cell *matHeaderCellDef> Estado </th>
+            <td mat-cell *matCellDef="let topic">
+              <mat-chip-set>
+                <mat-chip [class]="'status-chip ' + (!topic.enabled ? 'enabled-chip' : 'disabled-chip')">
+                  <mat-icon class="status-icon"> {{ !topic.enabled ? 'check_circle' : 'cancel' }} </mat-icon> {{
+                  !topic.enabled ? 'Habilitado' : 'Deshabilitado' }} </mat-chip>
+              </mat-chip-set>
+            </td>
+          </ng-container>
+          <!-- Premium Column -->
+          <ng-container matColumnDef="premium">
+            <th mat-header-cell *matHeaderCellDef> Premium </th>
+            <td mat-cell *matCellDef="let topic">
+              <button mat-icon-button [matTooltip]="topic.premium ? 'Premium activado' : 'Premium desactivado'"
+                (click)="onTogglePremium(topic)" [color]="topic.premium ? 'accent' : ''">
+                <mat-icon>{{ topic.premium ? 'star' : 'star_border' }}</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+          <!-- Created At Column -->
+          <ng-container matColumnDef="createdAt">
+            <th mat-header-cell *matHeaderCellDef> Fecha de Creación </th>
+            <td mat-cell *matCellDef="let topic">
+              <span class="date-text">{{ formatDate(topic.createdAt || '') }}</span>
+            </td>
+          </ng-container>
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef> Acciones </th>
+            <td mat-cell *matCellDef="let topic">
+              <div class="actions-container">
+                <button mat-icon-button [matTooltip]="'Ver detalles'" (click)="onTopicClick(topic)">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+                <button mat-icon-button [matTooltip]="'Editar'" (click)="onEditTopic(topic)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button [matTooltip]="!topic.enabled ? 'Deshabilitar' : 'Habilitar'"
+                  (click)="onToggleStatus(topic)">
+                  <mat-icon>{{ !topic.enabled ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+                </button>
+                <button mat-icon-button [matTooltip]="'Eliminar'" color="warn" (click)="onDeleteTopic(topic)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="topics && topics.length === 0">
+          <mat-icon class="empty-icon">topic</mat-icon>
+          <h3>No se encontraron topics</h3>
+          <p>No hay topics que coincidan con los filtros aplicados.</p>
+          <button mat-raised-button color="primary" (click)="clearFilters()"> Limpiar filtros </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+  <!-- Pagination -->
+  <mat-paginator *ngIf="!isLoading && topics && topics.length > 0" [length]="totalTopics" [pageSize]="pageSize"
+    [pageSizeOptions]="pageSizeOptions" [pageIndex]="currentPage - 1" (page)="onPageChange($event)" showFirstLastButtons
+    class="pagination">
+  </mat-paginator>
+</div>

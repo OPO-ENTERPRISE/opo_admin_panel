@@ -1,0 +1,81 @@
+<div class="main-layout">
+    <!-- Sidebar -->
+    <mat-sidenav-container class="sidenav-container">
+        <mat-sidenav #drawer class="sidenav sidebar" mode="side" [opened]="sidebarOpen" fixedInViewport>
+            <!-- Sidebar Header -->
+            <div class="sidebar-header">
+                <div class="logo">
+                    <mat-icon class="logo-icon">admin_panel_settings</mat-icon>
+                    <span class="logo-text" *ngIf="sidebarOpen">Admin Panel</span>
+                </div>
+            </div>
+            <!-- Area Selector -->
+            <div class="area-selector-container" *ngIf="sidebarOpen">
+                <app-area-selector></app-area-selector>
+            </div>
+            <!-- Navigation Menu -->
+            <mat-nav-list class="nav-list">
+                <ng-container *ngFor="let item of navigationItems">
+                    <a mat-list-item [routerLink]="item.route" routerLinkActive="active" class="nav-item sidebar-item"
+                        [class.active]="isActiveRoute(item.route)">
+                        <mat-icon matListItemIcon class="nav-icon">{{ item.icon }}</mat-icon>
+                        <span matListItemTitle class="nav-label" *ngIf="sidebarOpen"> {{ item.label }} <mat-icon
+                                *ngIf="item.badge && item.badge > 0" matBadge="{{ item.badge }}" matBadgeColor="warn"
+                                matBadgeSize="small" class="badge-icon">
+                            </mat-icon>
+                        </span>
+                    </a>
+                </ng-container>
+            </mat-nav-list>
+            <!-- Sidebar Footer -->
+            <div class="sidebar-footer" *ngIf="sidebarOpen">
+                <mat-divider></mat-divider>
+                <div class="user-info">
+                    <div class="user-avatar"> {{ getUserInitials() }} </div>
+                    <div class="user-details">
+                        <div class="user-name">{{ currentUser?.name }}</div>
+                        <div class="user-area">{{ getUserArea() }}</div>
+                    </div>
+                </div>
+            </div>
+        </mat-sidenav>
+        <!-- Main Content -->
+        <mat-sidenav-content class="main-content">
+            <!-- Top Toolbar -->
+            <mat-toolbar class="header toolbar">
+                <button mat-icon-button (click)="toggleSidebar()" class="menu-button">
+                    <mat-icon>menu</mat-icon>
+                </button>
+                <span class="toolbar-title"> Panel de Administración - Tests de Oposiciones </span>
+                <span class="spacer"></span>
+                <!-- User Menu -->
+                <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-menu-button">
+                    <div class="user-avatar-small"> {{ getUserInitials() }} </div>
+                </button>
+                <mat-menu #userMenu="matMenu" class="user-menu">
+                    <div class="user-menu-header">
+                        <div class="user-avatar-large"> {{ getUserInitials() }} </div>
+                        <div class="user-info">
+                            <div class="user-name">{{ currentUser?.name }}</div>
+                            <div class="user-email">{{ currentUser?.email }}</div>
+                            <div class="user-area">{{ getUserArea() }}</div>
+                        </div>
+                    </div>
+                    <mat-divider></mat-divider>
+                    <button mat-menu-item routerLink="/profile">
+                        <mat-icon>person</mat-icon>
+                        <span>Mi Perfil</span>
+                    </button>
+                    <button mat-menu-item (click)="logout()">
+                        <mat-icon>logout</mat-icon>
+                        <span>Cerrar Sesión</span>
+                    </button>
+                </mat-menu>
+            </mat-toolbar>
+            <!-- Page Content -->
+            <div class="content-wrapper">
+                <router-outlet></router-outlet>
+            </div>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
+</div>

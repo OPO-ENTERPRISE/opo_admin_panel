@@ -1,0 +1,83 @@
+<div class="topic-edit-container">
+    <!-- Loading State -->
+    <div *ngIf="isLoading" class="loading-container">
+        <mat-spinner></mat-spinner>
+        <p>Cargando topic...</p>
+    </div>
+    <!-- Edit Form -->
+    <div *ngIf="!isLoading && topic" class="edit-form-container">
+        <mat-card>
+            <mat-card-header>
+                <div class="header-content">
+                    <div class="header-title">
+                        <button mat-icon-button (click)="onCancel()" class="back-button">
+                            <mat-icon>arrow_back</mat-icon>
+                        </button>
+                        <mat-card-title>
+                            <mat-icon>edit</mat-icon> Editar Topic </mat-card-title>
+                    </div>
+                </div>
+            </mat-card-header>
+            <mat-card-content>
+                <form [formGroup]="editForm" (ngSubmit)="onSubmit()" class="edit-form">
+                    <!-- Topic Info (Read-only) -->
+                    <div class="info-section">
+                        <h3>Información del Topic</h3>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <span class="info-label">ID:</span>
+                                <span class="info-value">{{ topic.id }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">UUID:</span>
+                                <span class="info-value">{{ topic.uuid }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Área:</span>
+                                <span class="info-value">{{ topic.area === 1 ? 'PN - Policía Nacional' : 'PS - Policía
+                                    Local/Guardia Civil' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Editable Fields -->
+                    <div class="form-fields">
+                        <h3>Campos Editables</h3>
+                        <!-- Title Field -->
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Título</mat-label>
+                            <input matInput formControlName="title" placeholder="Ingrese el título del topic" />
+                            <mat-icon matPrefix>title</mat-icon>
+                            <mat-hint>El título debe tener entre 3 y 200 caracteres</mat-hint>
+                            <mat-error *ngIf="title?.hasError('required')"> El título es requerido </mat-error>
+                            <mat-error *ngIf="title?.hasError('minlength')"> El título debe tener al menos 3 caracteres
+                            </mat-error>
+                            <mat-error *ngIf="title?.hasError('maxlength')"> El título no puede exceder 200 caracteres
+                            </mat-error>
+                        </mat-form-field>
+                        <!-- Order Field -->
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Orden</mat-label>
+                            <input matInput type="number" formControlName="order"
+                                placeholder="Orden de visualización" />
+                            <mat-icon matPrefix>sort</mat-icon>
+                            <mat-hint>Define el orden de visualización (0-9999)</mat-hint>
+                            <mat-error *ngIf="order?.hasError('required')"> El orden es requerido </mat-error>
+                            <mat-error *ngIf="order?.hasError('min')"> El orden debe ser mayor o igual a 0 </mat-error>
+                            <mat-error *ngIf="order?.hasError('max')"> El orden no puede exceder 9999 </mat-error>
+                        </mat-form-field>
+                    </div>
+                    <!-- Action Buttons -->
+                    <div class="form-actions">
+                        <button mat-stroked-button type="button" (click)="onCancel()" [disabled]="isSaving">
+                            <mat-icon>cancel</mat-icon> Cancelar </button>
+                        <button mat-raised-button color="primary" type="submit"
+                            [disabled]="editForm.invalid || isSaving">
+                            <mat-spinner *ngIf="isSaving" diameter="20"></mat-spinner>
+                            <mat-icon *ngIf="!isSaving">save</mat-icon> {{ isSaving ? 'Guardando...' : 'Guardar Cambios'
+                            }} </button>
+                    </div>
+                </form>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

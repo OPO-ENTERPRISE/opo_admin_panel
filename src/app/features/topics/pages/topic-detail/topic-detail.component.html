@@ -1,0 +1,190 @@
+<div class="topic-detail-container">
+  <!-- Loading Spinner -->
+  <div class="loading-container" *ngIf="isLoading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Cargando topic...</p>
+  </div>
+  <!-- Topic Detail Content -->
+  <div class="topic-detail-content" *ngIf="!isLoading && topic">
+    <!-- Header -->
+    <div class="page-header">
+      <div class="header-content">
+        <button mat-icon-button (click)="onBackToList()" class="back-button">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="title-section">
+          <h1 class="page-title">
+            <mat-icon>topic</mat-icon> {{ topic.title }}
+          </h1>
+          <div class="topic-meta">
+            <mat-chip-set>
+              <mat-chip [class]="'area-chip ' + (topic.area === 1 ? 'pn-chip' : 'ps-chip')"> {{ getAreaName(topic.area)
+                }} </mat-chip>
+              <mat-chip [class]="'status-chip ' + (!topic.enabled ? 'enabled-chip' : 'disabled-chip')">
+                <mat-icon class="status-icon"> {{ !topic.enabled ? 'check_circle' : 'cancel' }} </mat-icon> {{
+                !topic.enabled ? 'Habilitado' : 'Deshabilitado' }} </mat-chip>
+            </mat-chip-set>
+          </div>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button mat-stroked-button (click)="onToggleStatus()" [color]="!topic.enabled ? 'warn' : 'primary'">
+          <mat-icon>{{ !topic.enabled ? 'toggle_on' : 'toggle_off' }}</mat-icon> {{ !topic.enabled ? 'Deshabilitar' :
+          'Habilitar' }} </button>
+        <button mat-raised-button color="primary" (click)="onEditTopic()">
+          <mat-icon>edit</mat-icon> Editar </button>
+      </div>
+    </div>
+    <!-- Topic Details -->
+    <div class="details-grid">
+      <!-- Main Info Card -->
+      <mat-card class="detail-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>info</mat-icon> Información General </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="info-label">ID</div>
+              <div class="info-value">{{ topic.id }}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">UUID</div>
+              <div class="info-value">{{ topic.uuid }}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Root ID</div>
+              <div class="info-value">{{ topic.rootId }}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Root UUID</div>
+              <div class="info-value">{{ topic.rootUuid }}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Área</div>
+              <div class="info-value">{{ getAreaFullName(topic.area) }} ({{ getAreaName(topic.area) }}) </div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Orden</div>
+              <div class="info-value">{{ topic.order }}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Estado</div>
+              <div class="info-value">
+                <mat-chip [class]="'status-chip ' + (!topic.enabled ? 'enabled-chip' : 'disabled-chip')">
+                  <mat-icon class="status-icon"> {{ !topic.enabled ? 'check_circle' : 'cancel' }} </mat-icon> {{
+                  !topic.enabled ? 'Habilitado' : 'Deshabilitado' }} </mat-chip>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <!-- Description Card -->
+      <mat-card class="detail-card" *ngIf="topic.description">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>description</mat-icon> Descripción </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p class="description-text">{{ topic.description }}</p>
+        </mat-card-content>
+      </mat-card>
+      <!-- Image Card -->
+      <mat-card class="detail-card" *ngIf="topic.imageUrl">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>image</mat-icon> Imagen </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="image-container">
+            <img [src]="topic.imageUrl" [alt]="topic.title" class="topic-image">
+          </div>
+        </mat-card-content>
+      </mat-card>
+      <!-- Timestamps Card -->
+      <mat-card class="detail-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>schedule</mat-icon> Fechas </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="info-grid">
+            <div class="info-item">
+              <div class="info-label">Fecha de creación</div>
+              <div class="info-value">{{ formatDate(topic.createdAt || '') }}</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">Última actualización</div>
+              <div class="info-value">{{ formatDate(topic.updatedAt || '') }}</div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <!-- Subtopics Section -->
+    <div class="subtopics-section" *ngIf="subtopics && subtopics.length > 0">
+      <mat-card class="subtopics-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>subdirectory_arrow_right</mat-icon> Subtemas ({{ subtopics.length }}) </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="subtopics-grid">
+            <div *ngFor="let subtopic of subtopics" class="subtopic-item">
+              <div class="subtopic-info">
+                <div class="subtopic-title">{{ subtopic.title }}</div>
+                <div class="subtopic-meta">
+                  <span class="subtopic-order">Orden: {{ subtopic.order }}</span>
+                  <mat-chip [class]="'status-chip ' + (!subtopic.enabled ? 'enabled-chip' : 'disabled-chip')">
+                    <mat-icon class="status-icon"> {{ !subtopic.enabled ? 'check_circle' : 'cancel' }} </mat-icon> {{
+                    !subtopic.enabled ? 'Habilitado' : 'Deshabilitado' }} </mat-chip>
+                  <button mat-icon-button [matTooltip]="subtopic.premium ? 'Premium activado' : 'Premium desactivado'"
+                    (click)="onToggleSubtopicPremium(subtopic, $event)" [color]="subtopic.premium ? 'accent' : ''"
+                    class="premium-badge">
+                    <mat-icon>{{ subtopic.premium ? 'star' : 'star_border' }}</mat-icon>
+                  </button>
+                </div>
+              </div>
+              <div class="subtopic-actions">
+                <button mat-icon-button [matTooltip]="'Editar título y orden'"
+                  (click)="onEditSubtopic(subtopic, $event)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button [matTooltip]="!subtopic.enabled ? 'Deshabilitar' : 'Habilitar'"
+                  (click)="onToggleSubtopicStatus(subtopic, $event)" [color]="!subtopic.enabled ? 'warn' : 'primary'">
+                  <mat-icon>{{ !subtopic.enabled ? 'toggle_off' : 'toggle_on' }}</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <!-- Empty State for Subtopics -->
+    <div class="empty-subtopics" *ngIf="!isLoading && (!subtopics || subtopics.length === 0)">
+      <mat-card class="empty-card">
+        <mat-card-content>
+          <div class="empty-state">
+            <mat-icon class="empty-icon">subdirectory_arrow_right</mat-icon>
+            <h3>No hay subtemas</h3>
+            <p>Este topic no tiene subtemas asociados.</p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+  <!-- Error State -->
+  <div class="error-state" *ngIf="!isLoading && !topic">
+    <mat-card class="error-card">
+      <mat-card-content>
+        <div class="error-content">
+          <mat-icon class="error-icon">error</mat-icon>
+          <h3>Topic no encontrado</h3>
+          <p>El topic solicitado no existe o no tienes permisos para verlo.</p>
+          <button mat-raised-button color="primary" (click)="onBackToList()"> Volver a la lista </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

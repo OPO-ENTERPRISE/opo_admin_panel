@@ -1,0 +1,34 @@
+<!-- Selector de Área como Dropdown -->
+<div class="area-selector" *ngIf="areas.length > 0">
+    <!-- Versión Compacta para Sidebar -->
+    <div class="area-selector-compact" *ngIf="selectedArea">
+        <button mat-button [matMenuTriggerFor]="areaMenu" class="area-button">
+            <mat-icon class="area-icon">{{ getAreaIcon(selectedArea.id) }}</mat-icon>
+            <span class="area-text">{{ getAreaDisplayName(selectedArea.id) }}</span>
+            <mat-icon class="dropdown-icon">keyboard_arrow_down</mat-icon>
+        </button>
+        <mat-menu #areaMenu="matMenu" class="area-menu">
+            <div class="area-menu-header">
+                <mat-icon>business</mat-icon>
+                <span>Seleccionar Área</span>
+            </div>
+            <mat-divider></mat-divider>
+            <button *ngFor="let area of areas" mat-menu-item (click)="onAreaChange(area)"
+                [class.selected]="selectedArea.id === area.id" class="area-menu-item">
+                <mat-icon class="area-menu-icon">{{ getAreaIcon(area.id) }}</mat-icon>
+                <div class="area-menu-content">
+                    <span class="area-name">{{ getAreaDisplayName(area.id) }}</span>
+                    <span class="area-description">{{ area.description }}</span>
+                </div>
+                <mat-icon *ngIf="selectedArea.id === area.id" class="check-icon">check</mat-icon>
+            </button>
+        </mat-menu>
+    </div>
+</div>
+<!-- Fallback si no hay áreas -->
+<div class="area-selector-fallback" *ngIf="areas.length === 0">
+    <div class="no-areas-message">
+        <mat-icon>warning</mat-icon>
+        <span>No hay áreas disponibles</span>
+    </div>
+</div>

@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+www/
+coverage/
+
+# Logs
+yarn-debug.log*
+yarn-error.log*
+npm-debug.log*
+
+# OS / Editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Angular cache
+.angular/
+
+# Env files
+.env
+.env.*
+
+# Misc
+.tmp/

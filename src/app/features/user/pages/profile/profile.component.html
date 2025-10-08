@@ -1,0 +1,140 @@
+<div class="profile-container">
+    <!-- Loading Spinner -->
+    <div class="loading-container" *ngIf="isLoading">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Cargando perfil...</p>
+    </div>
+    <!-- Profile Content -->
+    <div class="profile-content" *ngIf="!isLoading">
+        <!-- Header -->
+        <div class="page-header">
+            <h1 class="page-title">
+                <mat-icon>person</mat-icon> Mi Perfil
+            </h1>
+            <p class="page-subtitle"> Gestiona tu información personal y configuración de cuenta </p>
+        </div>
+        <!-- Profile Cards -->
+        <div class="profile-grid">
+            <!-- User Info Card -->
+            <mat-card class="profile-card">
+                <mat-card-header>
+                    <mat-card-title>
+                        <mat-icon>info</mat-icon> Información Personal </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <form [formGroup]="profileForm" (ngSubmit)="onUpdateProfile()">
+                        <div class="form-grid">
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Nombre</mat-label>
+                                <input matInput formControlName="name" placeholder="Ingresa tu nombre completo">
+                                <mat-error *ngIf="profileForm.get('name')?.invalid && profileForm.get('name')?.touched">
+                                    {{ getErrorMessage('name') }} </mat-error>
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Email</mat-label>
+                                <input matInput type="email" formControlName="email" placeholder="Ingresa tu email">
+                                <mat-error
+                                    *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched"> {{
+                                    getErrorMessage('email') }} </mat-error>
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" class="full-width" disabled>
+                                <mat-label>Área</mat-label>
+                                <input matInput [value]="getAreaFullName() + ' (' + getUserArea() + ')'" readonly>
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" class="full-width" disabled>
+                                <mat-label>Fecha de registro</mat-label>
+                                <input matInput [value]="currentUser?.createdAt | date:'medium'" readonly>
+                            </mat-form-field>
+                        </div>
+                        <div class="form-actions">
+                            <button mat-raised-button color="primary" type="submit"
+                                [disabled]="profileForm.invalid || isUpdating">
+                                <mat-spinner *ngIf="isUpdating" diameter="20" class="button-spinner">
+                                </mat-spinner>
+                                <span *ngIf="!isUpdating">Actualizar Perfil</span>
+                                <span *ngIf="isUpdating">Actualizando...</span>
+                            </button>
+                        </div>
+                    </form>
+                </mat-card-content>
+            </mat-card>
+            <!-- Password Change Card -->
+            <mat-card class="profile-card">
+                <mat-card-header>
+                    <mat-card-title>
+                        <mat-icon>lock</mat-icon> Cambiar Contraseña </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <form [formGroup]="passwordForm" (ngSubmit)="onChangePassword()">
+                        <div class="form-grid">
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Contraseña actual</mat-label>
+                                <input matInput type="password" formControlName="currentPassword"
+                                    placeholder="Ingresa tu contraseña actual">
+                                <mat-error
+                                    *ngIf="passwordForm.get('currentPassword')?.invalid && passwordForm.get('currentPassword')?.touched">
+                                    {{ getPasswordErrorMessage('currentPassword') }} </mat-error>
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Nueva contraseña</mat-label>
+                                <input matInput type="password" formControlName="newPassword"
+                                    placeholder="Ingresa tu nueva contraseña">
+                                <mat-error
+                                    *ngIf="passwordForm.get('newPassword')?.invalid && passwordForm.get('newPassword')?.touched">
+                                    {{ getPasswordErrorMessage('newPassword') }} </mat-error>
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Confirmar nueva contraseña</mat-label>
+                                <input matInput type="password" formControlName="confirmPassword"
+                                    placeholder="Confirma tu nueva contraseña">
+                                <mat-error
+                                    *ngIf="passwordForm.get('confirmPassword')?.invalid && passwordForm.get('confirmPassword')?.touched">
+                                    {{ getPasswordErrorMessage('confirmPassword') }} </mat-error>
+                            </mat-form-field>
+                        </div>
+                        <div class="form-actions">
+                            <button mat-raised-button color="accent" type="submit"
+                                [disabled]="passwordForm.invalid || isUpdating">
+                                <mat-spinner *ngIf="isUpdating" diameter="20" class="button-spinner">
+                                </mat-spinner>
+                                <span *ngIf="!isUpdating">Cambiar Contraseña</span>
+                                <span *ngIf="isUpdating">Cambiando...</span>
+                            </button>
+                        </div>
+                    </form>
+                </mat-card-content>
+            </mat-card>
+            <!-- Account Info Card -->
+            <mat-card class="profile-card">
+                <mat-card-header>
+                    <mat-card-title>
+                        <mat-icon>account_circle</mat-icon> Información de la Cuenta </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-label">ID de Usuario</div>
+                            <div class="info-value">{{ currentUser?.id || currentUser?._id }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Área asignada</div>
+                            <div class="info-value">{{ getAreaFullName() }} ({{ getUserArea() }})</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Último acceso</div>
+                            <div class="info-value">{{ currentUser?.lastLogin | date:'medium' }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Fecha de registro</div>
+                            <div class="info-value">{{ currentUser?.createdAt | date:'medium' }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Última actualización</div>
+                            <div class="info-value">{{ currentUser?.updatedAt | date:'medium' }}</div>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+    </div>
+</div>
