@@ -1,0 +1,112 @@
+<div class="provider-list-container">
+    <!-- Header -->
+    <div class="page-header">
+        <div class="header-content">
+            <h1 class="page-title">
+                <mat-icon>store</mat-icon> Gestión de Proveedores
+            </h1>
+            <p class="page-subtitle"> Administra los proveedores de publicidad disponibles </p>
+        </div>
+        <button mat-raised-button color="primary" (click)="onCreateProvider()" class="create-button">
+            <mat-icon>add</mat-icon> Nuevo Proveedor </button>
+    </div>
+    <!-- Providers Table -->
+    <mat-card class="table-card">
+        <mat-card-content>
+            <!-- Loading Spinner -->
+            <div class="loading-container" *ngIf="isLoading">
+                <mat-spinner diameter="40"></mat-spinner>
+                <p>Cargando proveedores...</p>
+            </div>
+            <!-- Table -->
+            <div class="table-container" *ngIf="!isLoading">
+                <table mat-table [dataSource]="providers" class="providers-table">
+                    <!-- Name Column -->
+                    <ng-container matColumnDef="name">
+                        <th mat-header-cell *matHeaderCellDef> Nombre </th>
+                        <td mat-cell *matCellDef="let provider">
+                            <div class="provider-name">
+                                <mat-icon class="provider-icon" [style.color]="provider.color || '#666'"> {{
+                                    provider.icon || 'store' }} </mat-icon>
+                                <span class="name-text">{{ provider.name }}</span>
+                            </div>
+                        </td>
+                    </ng-container>
+                    <!-- Provider ID Column -->
+                    <ng-container matColumnDef="providerId">
+                        <th mat-header-cell *matHeaderCellDef> ID </th>
+                        <td mat-cell *matCellDef="let provider">
+                            <code class="provider-id-code">{{ provider.providerId }}</code>
+                        </td>
+                    </ng-container>
+                    <!-- Icon Column -->
+                    <ng-container matColumnDef="icon">
+                        <th mat-header-cell *matHeaderCellDef> Icono </th>
+                        <td mat-cell *matCellDef="let provider">
+                            <mat-icon [style.color]="provider.color || '#666'">{{ provider.icon || 'store' }}</mat-icon>
+                        </td>
+                    </ng-container>
+                    <!-- Color Column -->
+                    <ng-container matColumnDef="color">
+                        <th mat-header-cell *matHeaderCellDef> Color </th>
+                        <td mat-cell *matCellDef="let provider">
+                            <div class="color-display" *ngIf="provider.color">
+                                <div class="color-box" [style.background-color]="provider.color"></div>
+                                <span class="color-text">{{ provider.color }}</span>
+                            </div>
+                            <span *ngIf="!provider.color" class="no-color">Sin color</span>
+                        </td>
+                    </ng-container>
+                    <!-- Enabled Column -->
+                    <ng-container matColumnDef="enabled">
+                        <th mat-header-cell *matHeaderCellDef> Estado </th>
+                        <td mat-cell *matCellDef="let provider">
+                            <mat-chip-set>
+                                <mat-chip
+                                    [class]="'status-chip ' + (provider.enabled ? 'enabled-chip' : 'disabled-chip')">
+                                    <mat-icon class="status-icon"> {{ provider.enabled ? 'check_circle' : 'cancel' }}
+                                    </mat-icon> {{ provider.enabled ? 'Habilitado' : 'Deshabilitado' }} </mat-chip>
+                            </mat-chip-set>
+                        </td>
+                    </ng-container>
+                    <!-- Order Column -->
+                    <ng-container matColumnDef="order">
+                        <th mat-header-cell *matHeaderCellDef> Orden </th>
+                        <td mat-cell *matCellDef="let provider">
+                            <span class="order-badge">{{ provider.order }}</span>
+                        </td>
+                    </ng-container>
+                    <!-- Actions Column -->
+                    <ng-container matColumnDef="actions">
+                        <th mat-header-cell *matHeaderCellDef> Acciones </th>
+                        <td mat-cell *matCellDef="let provider">
+                            <div class="actions-container">
+                                <button mat-icon-button [matTooltip]="'Editar'" (click)="onEditProvider(provider)">
+                                    <mat-icon>edit</mat-icon>
+                                </button>
+                                <button mat-icon-button [matTooltip]="provider.enabled ? 'Deshabilitar' : 'Habilitar'"
+                                    (click)="onToggleStatus(provider)">
+                                    <mat-icon>{{ provider.enabled ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+                                </button>
+                                <button mat-icon-button [matTooltip]="'Eliminar'" color="warn"
+                                    (click)="onDeleteProvider(provider)">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </div>
+                        </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+                </table>
+                <!-- Empty State -->
+                <div class="empty-state" *ngIf="providers && providers.length === 0">
+                    <mat-icon class="empty-icon">store</mat-icon>
+                    <h3>No hay proveedores</h3>
+                    <p>No se encontraron proveedores de publicidad.</p>
+                    <button mat-raised-button color="primary" (click)="onCreateProvider()">
+                        <mat-icon>add</mat-icon> Crear Primer Proveedor </button>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

@@ -9,10 +9,13 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSelectModule } from '@angular/material/select';
 import { Subject, takeUntil } from 'rxjs';
 
 import { TopicService } from '../../services/topic.service';
 import { Topic } from '../../../../core/models/topic.model';
+import { AreaService } from '../../../../core/services/area.service';
+import { IArea } from '../../../../core/models/area.model';
 
 @Component({
   selector: 'app-topic-edit',
@@ -29,6 +32,7 @@ import { Topic } from '../../../../core/models/topic.model';
     MatIconModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
+    MatSelectModule,
   ],
 })
 export class TopicEditComponent implements OnInit, OnDestroy {
@@ -39,18 +43,22 @@ export class TopicEditComponent implements OnInit, OnDestroy {
   topicId: number | null = null;
   isLoading = false;
   isSaving = false;
+  availableAreas: IArea[] = [];
+  isLoadingAreas = false;
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private fb: FormBuilder,
     private topicService: TopicService,
+    private areaService: AreaService,
     private snackBar: MatSnackBar
   ) {
     this.initForm();
   }
 
   ngOnInit(): void {
+    this.loadAreas();
     this.route.params.subscribe((params) => {
       const id = params['id'];
       this.topicId = id ? Number(id) : null;
@@ -69,6 +77,8 @@ export class TopicEditComponent implements OnInit, OnDestroy {
     this.editForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
       order: [0, [Validators.required, Validators.min(0), Validators.max(9999)]],
+      area: [1, [Validators.required, Validators.min(1), Validators.max(2)]],
+      type: ['topic', [Validators.required]],
     });
   }
 
@@ -86,6 +96,8 @@ export class TopicEditComponent implements OnInit, OnDestroy {
           this.editForm.patchValue({
             title: topic.title,
             order: topic.order,
+            area: topic.area,
+            type: topic.type || 'topic', // Valor por defecto si no existe
           });
           this.isLoading = false;
         },
@@ -94,6 +106,28 @@ export class TopicEditComponent implements OnInit, OnDestroy {
           this.snackBar.open('Error al cargar el topic', 'Cerrar', { duration: 3000 });
           this.isLoading = false;
           this.router.navigate(['/topics']);
+        },
+      });
+  }
+
+  private loadAreas(): void {
+    this.isLoadingAreas = true;
+
+    this.areaService
+      .getAreasFromBackend()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (response) => {
+          this.availableAreas = response.items;
+          this.isLoadingAreas = false;
+        },
+        error: (error) => {
+          console.error('Error loading areas:', error);
+          // Si falla la carga del backend, usar áreas predefinidas
+          this.areaService.getAreas().subscribe((areas) => {
+            this.availableAreas = areas;
+            this.isLoadingAreas = false;
+          });
         },
       });
   }
@@ -110,6 +144,8 @@ export class TopicEditComponent implements OnInit, OnDestroy {
       ...this.topic,
       title: this.editForm.value.title,
       order: this.editForm.value.order,
+      area: this.editForm.value.area,
+      type: this.editForm.value.type,
     };
 
     this.topicService
@@ -140,5 +176,13 @@ export class TopicEditComponent implements OnInit, OnDestroy {
 
   get order() {
     return this.editForm.get('order');
+  }
+
+  get area() {
+    return this.editForm.get('area');
+  }
+
+  get type() {
+    return this.editForm.get('type');
   }
 }

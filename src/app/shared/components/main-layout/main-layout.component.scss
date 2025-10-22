@@ -92,6 +92,61 @@
   height: 16px;
 }
 
+// Expansion panels for submenu
+.nav-expansion {
+  margin: 4px 12px;
+  border-radius: 8px !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+
+  &::before {
+    display: none; // Remove default border
+  }
+}
+
+.nav-expansion-header {
+  padding: 0 16px !important;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: var(--bg-card-hover) !important;
+  }
+}
+
+.nav-expansion-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.nav-children {
+  padding-left: 28px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.nav-child-item {
+  margin: 2px 0;
+  border-radius: 8px;
+  font-size: 14px;
+
+  &:hover {
+    background-color: var(--bg-card-hover);
+  }
+
+  &.active {
+    background-color: var(--bg-card);
+    color: var(--primary-color);
+
+    .nav-icon {
+      color: var(--primary-color);
+    }
+  }
+}
+
 .sidebar-footer {
   padding: 16px;
   border-top: 1px solid var(--border-color);

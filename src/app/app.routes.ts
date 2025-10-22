@@ -74,6 +74,48 @@ export const routes: Routes = [
             (m) => m.TestCorsComponent
           ),
       },
+      {
+        path: 'ads',
+        loadComponent: () =>
+          import('./features/ads/pages/ads-list/ads-list.component').then(
+            (m) => m.AdsListComponent
+          ),
+      },
+      {
+        path: 'ads/new',
+        loadComponent: () =>
+          import('./features/ads/pages/ads-form/ads-form.component').then(
+            (m) => m.AdsFormComponent
+          ),
+      },
+      {
+        path: 'ads/:id/edit',
+        loadComponent: () =>
+          import('./features/ads/pages/ads-form/ads-form.component').then(
+            (m) => m.AdsFormComponent
+          ),
+      },
+      {
+        path: 'ads/providers',
+        loadComponent: () =>
+          import('./features/ads/pages/provider-list/provider-list.component').then(
+            (m) => m.ProviderListComponent
+          ),
+      },
+      {
+        path: 'ads/providers/new',
+        loadComponent: () =>
+          import('./features/ads/pages/provider-form/provider-form.component').then(
+            (m) => m.ProviderFormComponent
+          ),
+      },
+      {
+        path: 'ads/providers/:id/edit',
+        loadComponent: () =>
+          import('./features/ads/pages/provider-form/provider-form.component').then(
+            (m) => m.ProviderFormComponent
+          ),
+      },
     ],
   },
   {

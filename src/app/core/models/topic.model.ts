@@ -10,6 +10,7 @@ export interface Topic {
   imageUrl?: string;
   enabled: boolean;
   premium: boolean; // Nuevo campo premium
+  type: 'topic' | 'exam' | 'misc'; // Tipo de topic: temas, exámenes oficiales, miscelánea
   order: number; // Cambiado a number
   parentUuid?: string;
   createdAt?: string;

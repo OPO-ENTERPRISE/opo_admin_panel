@@ -1,0 +1,90 @@
+<mat-card *ngIf="ad" class="preview-card">
+    <mat-card-header>
+        <mat-card-title>
+            <mat-icon>visibility</mat-icon> Vista Previa del Anuncio </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <!-- Ad Information -->
+        <div class="ad-info">
+            <div class="info-row">
+                <span class="label">Nombre:</span>
+                <span class="value">{{ ad.name }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Proveedor:</span>
+                <mat-chip [class]="'provider-' + ad.provider"> {{ getProviderLabel(ad.provider) }} </mat-chip>
+            </div>
+            <div class="info-row">
+                <span class="label">Tipo:</span>
+                <span class="value">{{ getTypeLabel(ad.type) }}</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Pantalla:</span>
+                <mat-chip class="screen-chip">{{ getScreenLabel(ad.appScreen) }}</mat-chip>
+            </div>
+            <div class="info-row">
+                <span class="label">Placement ID:</span>
+                <code class="placement-id">{{ ad.placementId }}</code>
+            </div>
+            <div class="info-row">
+                <span class="label">Estado:</span>
+                <mat-chip [class]="ad.active ? 'status-active' : 'status-inactive'"> {{ ad.active ? 'Activo' :
+                    'Inactivo' }} </mat-chip>
+            </div>
+        </div>
+        <!-- Visual Mock -->
+        <div class="visual-mock">
+            <div class="mock-label">Representación Visual Mock:</div>
+            <!-- Banner Mock -->
+            <div *ngIf="ad.type === 'banner'" class="mock-ad banner-mock">
+                <mat-icon>campaign</mat-icon>
+                <div class="mock-content">
+                    <div class="mock-title">Banner {{ getProviderLabel(ad.provider) }}</div>
+                    <div class="mock-subtitle">320x50 px</div>
+                </div>
+            </div>
+            <!-- Interstitial Mock -->
+            <div *ngIf="ad.type === 'interstitial'" class="mock-ad interstitial-mock">
+                <div class="interstitial-content">
+                    <mat-icon>fullscreen</mat-icon>
+                    <div class="mock-title">Anuncio Intersticial</div>
+                    <div class="mock-subtitle">{{ getProviderLabel(ad.provider) }}</div>
+                    <div class="mock-close">×</div>
+                </div>
+            </div>
+            <!-- Video Mock -->
+            <div *ngIf="ad.type === 'video'" class="mock-ad video-mock">
+                <mat-icon>play_circle</mat-icon>
+                <div class="mock-content">
+                    <div class="mock-title">Video Publicitario</div>
+                    <div class="mock-subtitle">{{ getProviderLabel(ad.provider) }}</div>
+                    <div class="mock-duration">0:00 / 0:30</div>
+                </div>
+            </div>
+        </div>
+        <!-- Config Information (if present) -->
+        <div *ngIf="ad.config" class="config-info">
+            <div class="config-title">Configuración Avanzada:</div>
+            <div class="config-row" *ngIf="ad.config.refreshRate">
+                <span class="config-label">Tasa de Refresco:</span>
+                <span class="config-value">{{ ad.config.refreshRate }} segundos</span>
+            </div>
+            <div class="config-row" *ngIf="ad.config.displayProbability">
+                <span class="config-label">Probabilidad de Visualización:</span>
+                <span class="config-value"> {{ (ad.config.displayProbability * 100).toFixed(0) }}% </span>
+            </div>
+            <div class="config-row" *ngIf="ad.config.customUrl">
+                <span class="config-label">URL Personalizada:</span>
+                <a [href]="ad.config.customUrl" target="_blank" class="config-value link"> {{ ad.config.customUrl }}
+                </a>
+            </div>
+        </div>
+    </mat-card-content>
+</mat-card>
+<!-- Empty State -->
+<mat-card *ngIf="!ad" class="empty-preview">
+    <mat-card-content>
+        <mat-icon>preview</mat-icon>
+        <p>No hay anuncio para mostrar</p>
+    </mat-card-content>
+</mat-card>

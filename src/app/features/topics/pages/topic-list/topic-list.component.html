@@ -10,6 +10,16 @@
     <button mat-raised-button color="primary" (click)="onCreateTopic()" class="create-button">
       <mat-icon>add</mat-icon> Nuevo Topic </button>
   </div>
+  <!-- Type Quick Filters -->
+  <div class="type-filters-container">
+    <h3 class="type-filters-title">Filtrar por tipo:</h3>
+    <div class="type-filters-buttons">
+      <button mat-stroked-button *ngFor="let option of typeOptions"
+        [color]="typeFilter.value === option.value ? 'primary' : ''" [class.active]="typeFilter.value === option.value"
+        (click)="typeFilter.setValue(option.value)" class="type-filter-button">
+        <mat-icon>{{ option.icon }}</mat-icon> {{ option.label }} </button>
+    </div>
+  </div>
   <!-- Filters -->
   <mat-card class="filters-card">
     <mat-card-content>
@@ -69,6 +79,17 @@
                   <div class="topic-description" *ngIf="topic.description"> {{ topic.description }} </div>
                 </div>
               </div>
+            </td>
+          </ng-container>
+          <!-- Type Column -->
+          <ng-container matColumnDef="type">
+            <th mat-header-cell *matHeaderCellDef> Tipo </th>
+            <td mat-cell *matCellDef="let topic">
+              <mat-chip-set>
+                <mat-chip [class]="'type-chip type-' + (topic.type || 'topic')">
+                  <mat-icon class="chip-icon">{{ getTypeIcon(topic.type || 'topic') }}</mat-icon> {{
+                  getTypeName(topic.type || 'topic') }} </mat-chip>
+              </mat-chip-set>
             </td>
           </ng-container>
           <!-- Area Column -->

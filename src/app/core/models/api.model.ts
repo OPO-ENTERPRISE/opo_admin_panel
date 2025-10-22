@@ -34,6 +34,7 @@ export interface TopicFilters extends PaginationParams {
   enabled?: boolean;
   premium?: boolean;
   search?: string;
+  type?: 'topic' | 'exam' | 'misc';
 }
 
 export interface HistoryFilters extends PaginationParams {

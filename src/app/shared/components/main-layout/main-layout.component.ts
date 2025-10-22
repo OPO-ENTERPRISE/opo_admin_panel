@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatBadgeModule } from '@angular/material/badge';
+import { MatExpansionModule } from '@angular/material/expansion';
 import { Subject, takeUntil, filter } from 'rxjs';
 
 import { AuthService } from '../../../core/services/auth.service';
@@ -38,6 +39,7 @@ interface NavigationItem {
     MatMenuModule,
     MatDividerModule,
     MatBadgeModule,
+    MatExpansionModule,
     AreaSelectorComponent,
   ],
   standalone: true,
@@ -64,6 +66,23 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
       label: 'Áreas',
       icon: 'category',
       route: '/areas',
+    },
+    {
+      label: 'Publicidad',
+      icon: 'campaign',
+      route: '/ads',
+      children: [
+        {
+          label: 'Anuncios',
+          icon: 'ad_units',
+          route: '/ads',
+        },
+        {
+          label: 'Proveedores',
+          icon: 'store',
+          route: '/ads/providers',
+        },
+      ],
     },
     {
       label: 'Usuarios',

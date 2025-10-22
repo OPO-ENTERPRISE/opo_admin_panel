@@ -59,6 +59,7 @@ export class TopicListComponent implements OnInit, OnDestroy {
   areaFilter = new FormControl('all');
   statusFilter = new FormControl('all');
   premiumFilter = new FormControl('all');
+  typeFilter = new FormControl('all');
 
   // Pagination
   currentPage = 1;
@@ -68,6 +69,7 @@ export class TopicListComponent implements OnInit, OnDestroy {
   // Table columns
   displayedColumns: string[] = [
     'title',
+    'type',
     'area',
     'order',
     'enabled',
@@ -93,6 +95,13 @@ export class TopicListComponent implements OnInit, OnDestroy {
     { value: 'all', label: 'Todos' },
     { value: 'true', label: 'Solo Premium' },
     { value: 'false', label: 'Solo No Premium' },
+  ];
+
+  readonly typeOptions = [
+    { value: 'all', label: 'Todos los tipos', icon: 'select_all' },
+    { value: 'topic', label: 'Temas', icon: 'menu_book' },
+    { value: 'exam', label: 'Exámenes Oficiales', icon: 'description' },
+    { value: 'misc', label: 'Miscelánea', icon: 'folder_special' },
   ];
 
   constructor(
@@ -164,6 +173,12 @@ export class TopicListComponent implements OnInit, OnDestroy {
       this.currentPage = 1;
       this.loadTopics();
     });
+
+    // Type filter
+    this.typeFilter.valueChanges.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.currentPage = 1;
+      this.loadTopics();
+    });
   }
 
   private loadTopics(): void {
@@ -183,6 +198,10 @@ export class TopicListComponent implements OnInit, OnDestroy {
         (this.areaFilter.value !== 'all' ? this.areaFilter.value || undefined : undefined),
       enabled: this.statusFilter.value !== 'all' ? this.statusFilter.value === 'true' : undefined,
       premium: this.premiumFilter.value !== 'all' ? this.premiumFilter.value === 'true' : undefined,
+      type:
+        this.typeFilter.value !== 'all'
+          ? (this.typeFilter.value as 'topic' | 'exam' | 'misc')
+          : undefined,
     };
 
     console.log('🔍 TopicList - Filtros enviados:', filters);
@@ -317,7 +336,16 @@ export class TopicListComponent implements OnInit, OnDestroy {
     this.areaFilter.setValue('all');
     this.statusFilter.setValue('all');
     this.premiumFilter.setValue('all');
+    this.typeFilter.setValue('all');
     this.currentPage = 1;
     this.loadTopics();
+  }
+
+  getTypeName(type: string): string {
+    return this.topicService.getTypeName(type);
+  }
+
+  getTypeIcon(type: string): string {
+    return this.topicService.getTypeIcon(type);
   }
 }

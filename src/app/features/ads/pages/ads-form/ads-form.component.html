@@ -1,0 +1,120 @@
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>
+            <div class="header-container">
+                <h2>{{ title }}</h2>
+            </div>
+        </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+        <!-- Loading Spinner -->
+        <div *ngIf="isLoading" class="loading-container">
+            <mat-spinner></mat-spinner>
+            <p>Cargando anuncio...</p>
+        </div>
+        <!-- Form -->
+        <form *ngIf="!isLoading" [formGroup]="adForm" (ngSubmit)="onSubmit()" class="ad-form">
+            <!-- Basic Information -->
+            <div class="form-section">
+                <h3 class="section-title">Información Básica</h3>
+                <div class="form-row">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Nombre del Anuncio</mat-label>
+                        <input matInput formControlName="name" placeholder="Ej: Banner Home Principal" />
+                        <mat-error *ngIf="adForm.get('name')?.hasError('required')"> El nombre es requerido </mat-error>
+                        <mat-error *ngIf="adForm.get('name')?.hasError('minlength')"> Mínimo 3 caracteres </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="form-row">
+                    <mat-form-field appearance="outline" class="half-width">
+                        <mat-label>Proveedor</mat-label>
+                        <mat-select formControlName="provider">
+                            <mat-option *ngFor="let option of providerOptions" [value]="option.value"> {{ option.label
+                                }} </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="adForm.get('provider')?.hasError('required')"> El proveedor es requerido
+                        </mat-error>
+                    </mat-form-field>
+                    <mat-form-field appearance="outline" class="half-width">
+                        <mat-label>Tipo de Anuncio</mat-label>
+                        <mat-select formControlName="type">
+                            <mat-option *ngFor="let option of typeOptions" [value]="option.value"> {{ option.label }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="adForm.get('type')?.hasError('required')"> El tipo es requerido </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="form-row">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Placement ID / Unit ID</mat-label>
+                        <input matInput formControlName="placementId"
+                            placeholder="Ej: ca-app-pub-3940256099942544/6300978111" />
+                        <mat-hint>ID del bloque publicitario proporcionado por el proveedor</mat-hint>
+                        <mat-error *ngIf="adForm.get('placementId')?.hasError('required')"> El Placement ID es requerido
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="form-row">
+                    <mat-form-field appearance="outline" class="half-width">
+                        <mat-label>Pantalla de la App</mat-label>
+                        <mat-select formControlName="appScreen">
+                            <mat-option *ngFor="let option of screenOptions" [value]="option.value"> {{ option.label }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-hint>Pantalla donde se mostrará el anuncio</mat-hint>
+                        <mat-error *ngIf="adForm.get('appScreen')?.hasError('required')"> La pantalla es requerida
+                        </mat-error>
+                    </mat-form-field>
+                    <div class="half-width toggle-container">
+                        <mat-slide-toggle formControlName="active" color="primary">
+                            <span class="toggle-label"> {{ adForm.get('active')?.value ? 'Activo' : 'Inactivo' }}
+                            </span>
+                        </mat-slide-toggle>
+                        <p class="toggle-hint">Activa o desactiva este anuncio</p>
+                    </div>
+                </div>
+            </div>
+            <!-- Advanced Configuration -->
+            <mat-expansion-panel class="config-panel">
+                <mat-expansion-panel-header>
+                    <mat-panel-title>
+                        <mat-icon>settings</mat-icon> Configuración Avanzada </mat-panel-title>
+                    <mat-panel-description> Opciones adicionales de visualización </mat-panel-description>
+                </mat-expansion-panel-header>
+                <div formGroupName="config" class="config-content">
+                    <div class="form-row">
+                        <mat-form-field appearance="outline" class="half-width">
+                            <mat-label>Tasa de Refresco (segundos)</mat-label>
+                            <input matInput type="number" formControlName="refreshRate" min="0" />
+                            <mat-hint>Tiempo entre actualizaciones del anuncio</mat-hint>
+                            <mat-error>{{ getConfigErrorMessage('refreshRate') }}</mat-error>
+                        </mat-form-field>
+                        <mat-form-field appearance="outline" class="half-width">
+                            <mat-label>Probabilidad de Visualización</mat-label>
+                            <input matInput type="number" formControlName="displayProbability" min="0" max="1"
+                                step="0.1" />
+                            <mat-hint>Entre 0.0 y 1.0 (0% a 100%)</mat-hint>
+                            <mat-error>{{ getConfigErrorMessage('displayProbability') }}</mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="form-row">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>URL Personalizada</mat-label>
+                            <input matInput formControlName="customUrl" placeholder="https://ejemplo.com" />
+                            <mat-hint>Solo para anuncios personalizados</mat-hint>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </mat-expansion-panel>
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button mat-raised-button type="button" (click)="onCancel()" [disabled]="isSaving" class="cancel-btn">
+                    <mat-icon>close</mat-icon> Cancelar </button>
+                <button mat-raised-button color="primary" type="submit" [disabled]="isSaving" class="submit-btn">
+                    <mat-spinner *ngIf="isSaving" diameter="20" class="button-spinner"></mat-spinner>
+                    <mat-icon *ngIf="!isSaving">save</mat-icon> {{ isSaving ? 'Guardando...' : 'Guardar Anuncio' }}
+                </button>
+            </div>
+        </form>
+    </mat-card-content>
+</mat-card>

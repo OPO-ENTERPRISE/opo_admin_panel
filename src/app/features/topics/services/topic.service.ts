@@ -34,6 +34,7 @@ export class TopicService {
     if (filters.enabled !== undefined) params = params.set('enabled', filters.enabled.toString());
     if (filters.premium !== undefined) params = params.set('premium', filters.premium.toString());
     if (filters.search) params = params.set('search', filters.search);
+    if (filters.type) params = params.set('type', filters.type);
 
     return this.http.get<TopicResponse>(`${this.API_URL}/admin/topics`, { params });
   }
@@ -185,5 +186,29 @@ export class TopicService {
   calculateEnabledPercentage(total: number, enabled: number): number {
     if (total === 0) return 0;
     return Math.round((enabled / total) * 100);
+  }
+
+  /**
+   * Obtiene el nombre del tipo de topic
+   */
+  getTypeName(type: string): string {
+    const types: Record<string, string> = {
+      topic: 'Temas',
+      exam: 'Exámenes Oficiales',
+      misc: 'Miscelánea',
+    };
+    return types[type] || type;
+  }
+
+  /**
+   * Obtiene el icono del tipo de topic
+   */
+  getTypeIcon(type: string): string {
+    const icons: Record<string, string> = {
+      topic: 'menu_book',
+      exam: 'description',
+      misc: 'folder_special',
+    };
+    return icons[type] || 'topic';
   }
 }

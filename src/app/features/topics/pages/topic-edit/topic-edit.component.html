@@ -32,11 +32,6 @@
                                 <span class="info-label">UUID:</span>
                                 <span class="info-value">{{ topic.uuid }}</span>
                             </div>
-                            <div class="info-item">
-                                <span class="info-label">Área:</span>
-                                <span class="info-value">{{ topic.area === 1 ? 'PN - Policía Nacional' : 'PS - Policía
-                                    Local/Guardia Civil' }}</span>
-                            </div>
                         </div>
                     </div>
                     <!-- Editable Fields -->
@@ -53,6 +48,35 @@
                             </mat-error>
                             <mat-error *ngIf="title?.hasError('maxlength')"> El título no puede exceder 200 caracteres
                             </mat-error>
+                        </mat-form-field>
+                        <!-- Area Field -->
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Área</mat-label>
+                            <mat-select formControlName="area" placeholder="Seleccione un área">
+                                <mat-icon matPrefix>domain</mat-icon>
+                                <mat-option *ngFor="let areaOption of availableAreas" [value]="+areaOption.id">
+                                    <mat-icon>{{ areaOption.icon || 'folder' }}</mat-icon> {{ areaOption.name }}
+                                </mat-option>
+                            </mat-select>
+                            <mat-icon matPrefix>domain</mat-icon>
+                            <mat-hint>Seleccione el área a la que pertenece el topic</mat-hint>
+                            <mat-error *ngIf="area?.hasError('required')"> El área es requerida </mat-error>
+                        </mat-form-field>
+                        <!-- Type Field -->
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Tipo</mat-label>
+                            <mat-select formControlName="type" placeholder="Seleccione el tipo">
+                                <mat-icon matPrefix>category</mat-icon>
+                                <mat-option value="topic">
+                                    <mat-icon>menu_book</mat-icon> Temas </mat-option>
+                                <mat-option value="exam">
+                                    <mat-icon>description</mat-icon> Exámenes Oficiales </mat-option>
+                                <mat-option value="misc">
+                                    <mat-icon>folder_special</mat-icon> Miscelánea </mat-option>
+                            </mat-select>
+                            <mat-icon matPrefix>category</mat-icon>
+                            <mat-hint>Seleccione el tipo de topic (heredado a subtopics)</mat-hint>
+                            <mat-error *ngIf="type?.hasError('required')"> El tipo es requerido </mat-error>
                         </mat-form-field>
                         <!-- Order Field -->
                         <mat-form-field appearance="outline" class="full-width">
