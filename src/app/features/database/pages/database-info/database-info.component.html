@@ -1,0 +1,137 @@
+<div class="database-info-container">
+    <!-- Header -->
+    <div class="header">
+        <h1>
+            <mat-icon>storage</mat-icon> Gestión de Base de Datos
+        </h1>
+        <p>Visualiza estadísticas y descarga backups de la base de datos MongoDB</p>
+    </div>
+    <!-- Loading spinner -->
+    <div *ngIf="loading" class="loading-container">
+        <mat-spinner></mat-spinner>
+        <p>Cargando estadísticas de la base de datos...</p>
+    </div>
+    <!-- Error state -->
+    <div *ngIf="!loading && !databaseStats" class="error-container">
+        <mat-icon color="warn">error</mat-icon>
+        <p>No se pudieron cargar las estadísticas de la base de datos</p>
+        <button mat-raised-button color="primary" (click)="loadDatabaseStats()">
+            <mat-icon>refresh</mat-icon> Reintentar </button>
+    </div>
+    <!-- Database stats content -->
+    <div *ngIf="!loading && databaseStats" class="content">
+        <!-- Summary cards -->
+        <div class="summary-cards">
+            <mat-card class="summary-card">
+                <mat-card-header>
+                    <mat-card-title>
+                        <mat-icon>database</mat-icon> Base de Datos </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="stat-value">{{ databaseStats.databaseName }}</div>
+                    <div class="stat-label">Nombre de la base de datos</div>
+                </mat-card-content>
+            </mat-card>
+            <mat-card class="summary-card">
+                <mat-card-header>
+                    <mat-card-title>
+                        <mat-icon>folder</mat-icon> Colecciones </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="stat-value">{{ databaseStats.collections.length }}</div>
+                    <div class="stat-label">Total de colecciones</div>
+                </mat-card-content>
+            </mat-card>
+            <mat-card class="summary-card">
+                <mat-card-header>
+                    <mat-card-title>
+                        <mat-icon>description</mat-icon> Documentos </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="stat-value">{{ formatNumber(databaseStats.totalDocuments) }}</div>
+                    <div class="stat-label">Total de documentos</div>
+                </mat-card-content>
+            </mat-card>
+            <mat-card class="summary-card">
+                <mat-card-header>
+                    <mat-card-title>
+                        <mat-icon>storage</mat-icon> Tamaño </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="stat-value">{{ formatSize(databaseStats.totalSize) }}</div>
+                    <div class="stat-label">Tamaño total</div>
+                </mat-card-content>
+            </mat-card>
+        </div>
+        <!-- Collections table -->
+        <mat-card class="collections-card">
+            <mat-card-header>
+                <mat-card-title>
+                    <mat-icon>table_chart</mat-icon> Detalle de Colecciones </mat-card-title>
+                <mat-card-subtitle> Información detallada de cada colección en la base de datos </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="table-container">
+                    <table mat-table [dataSource]="collections" class="collections-table">
+                        <!-- Name Column -->
+                        <ng-container matColumnDef="name">
+                            <th mat-header-cell *matHeaderCellDef>Nombre</th>
+                            <td mat-cell *matCellDef="let collection">
+                                <div class="collection-name">
+                                    <mat-icon>folder</mat-icon> {{ collection.name }}
+                                </div>
+                            </td>
+                        </ng-container>
+                        <!-- Document Count Column -->
+                        <ng-container matColumnDef="documentCount">
+                            <th mat-header-cell *matHeaderCellDef>Documentos</th>
+                            <td mat-cell *matCellDef="let collection">
+                                <div class="document-count"> {{ formatNumber(collection.documentCount) }} </div>
+                            </td>
+                        </ng-container>
+                        <!-- Size Column -->
+                        <ng-container matColumnDef="size">
+                            <th mat-header-cell *matHeaderCellDef>Tamaño</th>
+                            <td mat-cell *matCellDef="let collection">
+                                <div class="size"> {{ formatSize(collection.size) }} </div>
+                            </td>
+                        </ng-container>
+                        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+                    </table>
+                </div>
+            </mat-card-content>
+        </mat-card>
+        <!-- Download backup section -->
+        <mat-card class="download-card">
+            <mat-card-header>
+                <mat-card-title>
+                    <mat-icon>download</mat-icon> Backup de Base de Datos </mat-card-title>
+                <mat-card-subtitle> Descarga un backup completo de la base de datos en formato JSON </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-content>
+                <div class="download-info">
+                    <p>
+                        <mat-icon>info</mat-icon> El backup incluye todos los datos de la base de datos actual y se
+                        descarga como un archivo JSON con streaming para evitar timeouts
+                    </p>
+                    <p>
+                        <mat-icon>schedule</mat-icon> Esta operación puede tomar varios minutos dependiendo del tamaño
+                        de la base de datos
+                    </p>
+                    <p>
+                        <mat-icon>warning</mat-icon> El archivo JSON contiene todos los documentos y puede ser procesado
+                        para importar a otra base de datos MongoDB
+                    </p>
+                </div>
+                <div class="download-actions">
+                    <button mat-raised-button color="primary" (click)="downloadBackup()" [disabled]="downloading"
+                        class="download-button">
+                        <mat-icon *ngIf="!downloading">download</mat-icon>
+                        <mat-spinner *ngIf="downloading" diameter="20"></mat-spinner> {{ downloading ? 'Descargando...'
+                        : 'Descargar Backup' }} </button>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>

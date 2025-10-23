@@ -116,6 +116,13 @@ export const routes: Routes = [
             (m) => m.ProviderFormComponent
           ),
       },
+      {
+        path: 'database',
+        loadComponent: () =>
+          import('./features/database/pages/database-info/database-info.component').then(
+            (m) => m.DatabaseInfoComponent
+          ),
+      },
     ],
   },
   {

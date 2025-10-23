@@ -90,6 +90,11 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
       route: '/users',
     },
     {
+      label: 'Base de Datos',
+      icon: 'storage',
+      route: '/database',
+    },
+    {
       label: 'Perfil',
       icon: 'person',
       route: '/profile',
