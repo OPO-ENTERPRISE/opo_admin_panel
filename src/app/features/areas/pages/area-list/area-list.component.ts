@@ -359,7 +359,7 @@ export class AreaEditDialog {
         this.data.area?.order || 0,
         [Validators.required, Validators.min(0), Validators.max(9999)],
       ],
-      enabled: [this.data.area?.enabled !== undefined ? this.data.area.enabled : true],
+      enabled: [this.data.area?.enabled !== undefined ? this.data.area.enabled : false], // Lógica invertida: false = habilitado
     });
   }
 

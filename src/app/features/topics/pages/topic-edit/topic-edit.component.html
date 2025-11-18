@@ -4,8 +4,8 @@
         <mat-spinner></mat-spinner>
         <p>Cargando topic...</p>
     </div>
-    <!-- Edit Form -->
-    <div *ngIf="!isLoading && topic" class="edit-form-container">
+    <!-- Edit/Create Form -->
+    <div *ngIf="!isLoading" class="edit-form-container">
         <mat-card>
             <mat-card-header>
                 <div class="header-content">
@@ -14,14 +14,15 @@
                             <mat-icon>arrow_back</mat-icon>
                         </button>
                         <mat-card-title>
-                            <mat-icon>edit</mat-icon> Editar Topic </mat-card-title>
+                            <mat-icon>{{ topicId ? 'edit' : 'add' }}</mat-icon> {{ topicId ? 'Editar Topic' : 'Crear
+                            Topic' }} </mat-card-title>
                     </div>
                 </div>
             </mat-card-header>
             <mat-card-content>
                 <form [formGroup]="editForm" (ngSubmit)="onSubmit()" class="edit-form">
-                    <!-- Topic Info (Read-only) -->
-                    <div class="info-section">
+                    <!-- Topic Info (Read-only) - Solo en modo edición -->
+                    <div class="info-section" *ngIf="topicId && topic">
                         <h3>Información del Topic</h3>
                         <div class="info-grid">
                             <div class="info-item">
@@ -97,8 +98,8 @@
                         <button mat-raised-button color="primary" type="submit"
                             [disabled]="editForm.invalid || isSaving">
                             <mat-spinner *ngIf="isSaving" diameter="20"></mat-spinner>
-                            <mat-icon *ngIf="!isSaving">save</mat-icon> {{ isSaving ? 'Guardando...' : 'Guardar Cambios'
-                            }} </button>
+                            <mat-icon *ngIf="!isSaving">{{ topicId ? 'save' : 'add' }}</mat-icon> {{ isSaving ?
+                            'Guardando...' : (topicId ? 'Guardar Cambios' : 'Crear Topic') }} </button>
                     </div>
                 </form>
             </mat-card-content>

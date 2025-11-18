@@ -150,7 +150,7 @@
                 </button>
                 <button mat-icon-button [matTooltip]="!topic.enabled ? 'Deshabilitar' : 'Habilitar'"
                   (click)="onToggleStatus(topic)">
-                  <mat-icon>{{ !topic.enabled ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+                  <mat-icon>{{ topic.enabled ? 'toggle_off' : 'toggle_on' }}</mat-icon>
                 </button>
                 <button mat-icon-button [matTooltip]="'Eliminar'" color="warn" (click)="onDeleteTopic(topic)">
                   <mat-icon>delete</mat-icon>

@@ -62,6 +62,23 @@ export interface CreateTopicRequest {
   parentUuid?: string;
 }
 
+export interface CreateTopicFormData {
+  title: string;
+  area: number;
+  type: 'topic' | 'exam' | 'misc';
+  order: number;
+  description?: string;
+  imageUrl?: string;
+}
+
+export interface CreateSubtopicFormData {
+  title: string;
+  type?: 'topic' | 'exam' | 'misc';
+  order: number;
+  description?: string;
+  imageUrl?: string;
+}
+
 export interface UpdateTopicRequest extends CreateTopicRequest {}
 
 export interface ToggleTopicRequest {
@@ -70,4 +87,49 @@ export interface ToggleTopicRequest {
 
 export interface TogglePremiumRequest {
   premium: boolean;
+}
+
+export interface SourceTopicInfo {
+  topicId: number;
+  uuid: string;
+  title: string;
+  area: number;
+  isMain: boolean;
+  subtopicCount: number;
+  questionCount: number;
+}
+
+export interface CopyQuestionsRequest {
+  sourceTopicUuids: string[];
+}
+
+export interface CopyQuestionsResponse {
+  message: string;
+  questionsCopied: number;
+  topicsProcessed: number;
+}
+
+export interface QuestionOptionFromJson {
+  text: string;
+  correct: boolean;
+}
+
+export interface QuestionFromJson {
+  statement: string;
+  options: QuestionOptionFromJson[];
+  multi: boolean;
+}
+
+export interface UploadQuestionsRequest {
+  area: number;
+  topicId: number;
+  subtopicId?: number;
+  questions: QuestionFromJson[];
+  mode: 'add' | 'replace';
+}
+
+export interface UploadQuestionsResponse {
+  message: string;
+  questionsAdded: number;
+  totalQuestions: number;
 }

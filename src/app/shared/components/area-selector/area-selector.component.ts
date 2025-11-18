@@ -53,7 +53,7 @@ export class AreaSelectorComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          // Filtrar solo las áreas habilitadas
+          // Filtrar solo las áreas habilitadas (lógica invertida: enabled: false = habilitado)
           this.areas = response.items.filter((area) => !area.enabled);
         },
         error: (error) => {

@@ -29,7 +29,7 @@
       </div>
       <div class="header-actions">
         <button mat-stroked-button (click)="onToggleStatus()" [color]="!topic.enabled ? 'warn' : 'primary'">
-          <mat-icon>{{ !topic.enabled ? 'toggle_on' : 'toggle_off' }}</mat-icon> {{ !topic.enabled ? 'Deshabilitar' :
+          <mat-icon>{{ topic.enabled ? 'toggle_off' : 'toggle_on' }}</mat-icon> {{ !topic.enabled ? 'Deshabilitar' :
           'Habilitar' }} </button>
         <button mat-raised-button color="primary" (click)="onEditTopic()">
           <mat-icon>edit</mat-icon> Editar </button>
@@ -122,15 +122,41 @@
         </mat-card-content>
       </mat-card>
     </div>
+    <!-- Questions Section -->
+    <div class="questions-section">
+      <mat-card class="questions-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>quiz</mat-icon> Preguntas </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <p>Gestionar las preguntas de este tema</p>
+          <div class="questions-actions">
+            <button mat-raised-button color="primary" (click)="onAddQuestions()">
+              <mat-icon>add</mat-icon> Añadir Preguntas desde Otros Temas
+            </button>
+            <button mat-stroked-button color="primary" (click)="onUploadQuestions()">
+              <mat-icon>upload_file</mat-icon> Subir Preguntas desde JSON
+            </button>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
     <!-- Subtopics Section -->
-    <div class="subtopics-section" *ngIf="subtopics && subtopics.length > 0">
+    <div class="subtopics-section" *ngIf="isMainTopic(topic)">
       <mat-card class="subtopics-card">
         <mat-card-header>
           <mat-card-title>
-            <mat-icon>subdirectory_arrow_right</mat-icon> Subtemas ({{ subtopics.length }}) </mat-card-title>
+            <mat-icon>subdirectory_arrow_right</mat-icon> Subtemas ({{ subtopics.length }})
+          </mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <div class="subtopics-grid">
+          <div style="margin-bottom: 16px;">
+            <button mat-raised-button color="primary" (click)="onCreateSubtopic()">
+              <mat-icon>add</mat-icon> Añadir Subtema
+            </button>
+          </div>
+          <div class="subtopics-grid" *ngIf="subtopics && subtopics.length > 0">
             <div *ngFor="let subtopic of subtopics" class="subtopic-item">
               <div class="subtopic-info">
                 <div class="subtopic-title">{{ subtopic.title }}</div>
@@ -153,7 +179,7 @@
                 </button>
                 <button mat-icon-button [matTooltip]="!subtopic.enabled ? 'Deshabilitar' : 'Habilitar'"
                   (click)="onToggleSubtopicStatus(subtopic, $event)" [color]="!subtopic.enabled ? 'warn' : 'primary'">
-                  <mat-icon>{{ !subtopic.enabled ? 'toggle_off' : 'toggle_on' }}</mat-icon>
+                  <mat-icon>{{ subtopic.enabled ? 'toggle_off' : 'toggle_on' }}</mat-icon>
                 </button>
               </div>
             </div>
@@ -162,13 +188,16 @@
       </mat-card>
     </div>
     <!-- Empty State for Subtopics -->
-    <div class="empty-subtopics" *ngIf="!isLoading && (!subtopics || subtopics.length === 0)">
+    <div class="empty-subtopics" *ngIf="!isLoading && isMainTopic(topic) && (!subtopics || subtopics.length === 0)">
       <mat-card class="empty-card">
         <mat-card-content>
           <div class="empty-state">
             <mat-icon class="empty-icon">subdirectory_arrow_right</mat-icon>
             <h3>No hay subtemas</h3>
             <p>Este topic no tiene subtemas asociados.</p>
+            <button mat-raised-button color="primary" (click)="onCreateSubtopic()" style="margin-top: 16px;">
+              <mat-icon>add</mat-icon> Crear Primer Subtema
+            </button>
           </div>
         </mat-card-content>
       </mat-card>

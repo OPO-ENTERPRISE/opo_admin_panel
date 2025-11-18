@@ -1,0 +1,178 @@
+<div class="notification-form-container">
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Cargando notificación...</p>
+  </div>
+
+  <!-- Edit/Create Form -->
+  <div *ngIf="!isLoading" class="form-container">
+    <mat-card>
+      <mat-card-header>
+        <div class="header-content">
+          <div class="header-title">
+            <button mat-icon-button (click)="onCancel()" class="back-button">
+              <mat-icon>arrow_back</mat-icon>
+            </button>
+            <mat-card-title>
+              <mat-icon>{{ notificationId ? 'edit' : 'add' }}</mat-icon>
+              {{ notificationId ? 'Editar Notificación' : 'Crear Notificación' }}
+            </mat-card-title>
+          </div>
+        </div>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="notificationForm" (ngSubmit)="onSubmit()" class="notification-form">
+          <!-- Basic Info -->
+          <div class="form-section">
+            <h3>Información Básica</h3>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Título</mat-label>
+              <input matInput formControlName="title" placeholder="Ej: Nueva actualización disponible" />
+              <mat-icon matPrefix>title</mat-icon>
+              <mat-hint>El título debe tener entre 3 y 200 caracteres</mat-hint>
+              <mat-error *ngIf="notificationForm.get('title')?.hasError('required')">
+                El título es requerido
+              </mat-error>
+              <mat-error *ngIf="notificationForm.get('title')?.hasError('minlength')">
+                El título debe tener al menos 3 caracteres
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Mensaje</mat-label>
+              <textarea
+                matInput
+                formControlName="message"
+                rows="4"
+                placeholder="Mensaje que verán los usuarios en la app"
+              ></textarea>
+              <mat-icon matPrefix>message</mat-icon>
+              <mat-hint>Mensaje completo de la notificación (mínimo 10 caracteres)</mat-hint>
+              <mat-error *ngIf="notificationForm.get('message')?.hasError('required')">
+                El mensaje es requerido
+              </mat-error>
+              <mat-error *ngIf="notificationForm.get('message')?.hasError('minlength')">
+                El mensaje debe tener al menos 10 caracteres
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <!-- Configuration -->
+          <div class="form-section">
+            <h3>Configuración</h3>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Tipo</mat-label>
+                <mat-select formControlName="type">
+                  <mat-option *ngFor="let option of typeOptions" [value]="option.value">
+                    {{ option.label }}
+                  </mat-option>
+                </mat-select>
+                <mat-icon matPrefix>category</mat-icon>
+                <mat-hint>Simple: desaparece al cerrar. Fija: requiere acción</mat-hint>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Área</mat-label>
+                <mat-select formControlName="area">
+                  <mat-option *ngFor="let option of areaOptions" [value]="option.value">
+                    {{ option.label }}
+                  </mat-option>
+                </mat-select>
+                <mat-icon matPrefix>domain</mat-icon>
+              </mat-form-field>
+            </div>
+
+            <!-- Action Type (solo para tipo fixed) -->
+            <div *ngIf="isFixedType" class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Acción Requerida</mat-label>
+                <mat-select formControlName="actionType">
+                  <mat-option *ngFor="let option of actionTypeOptions" [value]="option.value">
+                    {{ option.label }}
+                  </mat-option>
+                </mat-select>
+                <mat-icon matPrefix>settings</mat-icon>
+                <mat-hint>Acción que debe completar el usuario para cerrar la notificación</mat-hint>
+                <mat-error *ngIf="notificationForm.get('actionType')?.hasError('required')">
+                  La acción es requerida para notificaciones fijas
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <!-- Action Data (si actionType es link o update_app) -->
+            <div *ngIf="isFixedType && (isLinkAction || isUpdateAppAction)" class="form-row">
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>
+                  {{ isLinkAction ? 'URL del Enlace' : 'Versión Mínima Requerida' }}
+                </mat-label>
+                <input
+                  matInput
+                  formControlName="actionData"
+                  [placeholder]="isLinkAction ? 'https://ejemplo.com' : '1.2.3'"
+                />
+                <mat-icon matPrefix>{{ isLinkAction ? 'link' : 'update' }}</mat-icon>
+                <mat-hint>
+                  {{
+                    isLinkAction
+                      ? 'URL que se abrirá al hacer clic'
+                      : 'Versión mínima de la app requerida (ej: 1.2.3)'
+                  }}
+                </mat-hint>
+                <mat-error *ngIf="notificationForm.get('actionData')?.hasError('required')">
+                  Este campo es requerido
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <!-- Schedule -->
+          <div class="form-section">
+            <h3>Programación</h3>
+
+            <div class="form-row">
+              <mat-form-field appearance="outline">
+                <mat-label>Fecha de Inicio</mat-label>
+                <input matInput [matDatepicker]="startPicker" formControlName="startDate" />
+                <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+                <mat-datepicker #startPicker></mat-datepicker>
+                <mat-icon matPrefix>event</mat-icon>
+                <mat-hint>Fecha y hora desde la cual la notificación será visible</mat-hint>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Fecha de Fin (Opcional)</mat-label>
+                <input matInput [matDatepicker]="endPicker" formControlName="endDate" />
+                <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+                <mat-datepicker #endPicker></mat-datepicker>
+                <mat-icon matPrefix>event_busy</mat-icon>
+                <mat-hint>Fecha y hora hasta la cual la notificación será visible</mat-hint>
+              </mat-form-field>
+            </div>
+
+            <mat-checkbox formControlName="enabled">
+              Notificación activada
+            </mat-checkbox>
+          </div>
+
+          <!-- Actions -->
+          <div class="form-actions">
+            <button mat-button type="button" (click)="onCancel()">
+              <mat-icon>cancel</mat-icon>
+              Cancelar
+            </button>
+            <button mat-raised-button color="primary" type="submit" [disabled]="isSaving || notificationForm.invalid">
+              <mat-icon *ngIf="!isSaving">{{ notificationId ? 'save' : 'add' }}</mat-icon>
+              <mat-spinner *ngIf="isSaving" diameter="20"></mat-spinner>
+              {{ notificationId ? 'Guardar Cambios' : 'Crear Notificación' }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
+

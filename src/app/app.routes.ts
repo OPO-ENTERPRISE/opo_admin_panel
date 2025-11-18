@@ -35,6 +35,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'topics/new',
+        loadComponent: () =>
+          import('./features/topics/pages/topic-edit/topic-edit.component').then(
+            (m) => m.TopicEditComponent
+          ),
+      },
+      {
         path: 'topics/:id/edit',
         loadComponent: () =>
           import('./features/topics/pages/topic-edit/topic-edit.component').then(
@@ -122,6 +129,32 @@ export const routes: Routes = [
           import('./features/database/pages/database-info/database-info.component').then(
             (m) => m.DatabaseInfoComponent
           ),
+      },
+      {
+        path: 'notifications',
+        loadComponent: () =>
+          import('./features/notifications/pages/notification-list/notification-list.component').then(
+            (m) => m.NotificationListComponent
+          ),
+      },
+      {
+        path: 'notifications/new',
+        loadComponent: () =>
+          import('./features/notifications/pages/notification-form/notification-form.component').then(
+            (m) => m.NotificationFormComponent
+          ),
+      },
+      {
+        path: 'notifications/:id/edit',
+        loadComponent: () =>
+          import('./features/notifications/pages/notification-form/notification-form.component').then(
+            (m) => m.NotificationFormComponent
+          ),
+      },
+      {
+        path: 'ia-works',
+        loadComponent: () =>
+          import('./features/ia-works/ia-works.component').then((m) => m.IaWorksComponent),
       },
     ],
   },

@@ -1,0 +1,135 @@
+<div class="dialog-container upload-questions-dialog">
+    <h2 mat-dialog-title>
+        <mat-icon>upload_file</mat-icon> Subir Preguntas desde JSON
+    </h2>
+    <mat-dialog-content class="dialog-content">
+        <!-- Topic info -->
+        <div class="topic-info">
+            <p><strong>Tema:</strong> {{ data.topic.title }}</p>
+        </div>
+
+        <!-- Subtopic selector -->
+        <div class="subtopic-section" *ngIf="subTopics.length > 0">
+            <mat-form-field appearance="outline" style="width: 100%;">
+                <mat-label>Subtema (opcional)</mat-label>
+                <mat-select [formControl]="subtopicControl">
+                    <mat-option [value]="null">
+                        <em>Seleccionar tema principal</em>
+                    </mat-option>
+                    <mat-option *ngFor="let subtopic of subTopics" [value]="subtopic.id">
+                        {{ subtopic.title }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+            <p style="margin-top: 8px; font-size: 0.9em; color: #666;">
+                <mat-icon style="font-size: 16px; width: 16px; height: 16px; vertical-align: middle;">info</mat-icon>
+                Selecciona un subtema para añadir las preguntas a ese subtema específico
+            </p>
+        </div>
+
+        <!-- File upload -->
+        <div class="upload-section">
+            <h3 style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                <mat-icon>description</mat-icon> Archivo JSON
+            </h3>
+            <div class="file-input-container">
+                <input type="file" accept=".json" #fileInput (change)="onFileSelected($event)" />
+                <button mat-stroked-button type="button" (click)="fileInput.click()" [disabled]="isUploading">
+                    <mat-icon>folder_open</mat-icon> Seleccionar archivo
+                </button>
+                <span class="file-name" *ngIf="fileControl.value">
+                    {{ fileControl.value.name }}
+                </span>
+                <span class="file-name" *ngIf="!fileControl.value" style="color: #999; font-style: italic;">
+                    Ningún archivo seleccionado
+                </span>
+            </div>
+        </div>
+
+        <!-- Mode selection -->
+        <div class="mode-section">
+            <h3 style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+                <mat-icon>settings</mat-icon> Modo de carga
+            </h3>
+            <div class="mode-options">
+                <div class="mode-option" [class.selected]="modeControl.value === mode.value" 
+                     *ngFor="let mode of modeOptions">
+                    <label>
+                        <mat-radio-button [value]="mode.value" [formControl]="modeControl"></mat-radio-button>
+                        <div>
+                            <div class="mode-header">{{ mode.label }}</div>
+                            <div class="mode-description">{{ mode.description }}</div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview -->
+        <div class="preview-section" *ngIf="questions.length > 0">
+            <div class="preview-header">
+                <h3>
+                    <mat-icon>preview</mat-icon> Vista previa
+                </h3>
+                <div class="questions-count">
+                    <mat-icon style="font-size: 18px; width: 18px; height: 18px;">check_circle</mat-icon>
+                    {{ questions.length }} pregunta(s)
+                </div>
+            </div>
+            <div class="preview-list">
+                <div class="question-preview-card" *ngFor="let question of getPreviewQuestions(); let i = index">
+                    <div class="question-statement">
+                        <span class="question-number">{{ i + 1 }}</span>
+                        <span>{{ question.statement }}</span>
+                    </div>
+                    <div class="question-options">
+                        <div class="option-item" *ngFor="let option of question.options">
+                            <span class="option-icon" [class.correct]="option.correct" [class.incorrect]="!option.correct">
+                                <mat-icon style="font-size: 14px; width: 14px; height: 14px;">
+                                    {{ option.correct ? 'check' : 'close' }}
+                                </mat-icon>
+                            </span>
+                            <span class="option-text">{{ option.text }}</span>
+                        </div>
+                    </div>
+                    <div class="question-type-badge">
+                        <mat-chip-set>
+                            <mat-chip>
+                                <mat-icon style="font-size: 14px; width: 14px; height: 14px;">category</mat-icon>
+                                {{ question.multi ? 'Múltiple respuesta' : 'Respuesta única' }}
+                            </mat-chip>
+                        </mat-chip-set>
+                    </div>
+                </div>
+                <div class="more-questions-indicator" *ngIf="hasMoreThan3Questions()">
+                    <mat-icon>more_horiz</mat-icon>
+                    Y {{ questions.length - 3 }} pregunta(s) más...
+                </div>
+            </div>
+        </div>
+
+        <!-- No questions message -->
+        <div class="no-questions" *ngIf="questions.length === 0 && fileControl.value">
+            <mat-icon>warning</mat-icon>
+            <p>No se encontraron preguntas válidas en el archivo</p>
+        </div>
+
+        <!-- No file selected message -->
+        <div class="no-questions" *ngIf="questions.length === 0 && !fileControl.value">
+            <mat-icon>upload_file</mat-icon>
+            <p>Selecciona un archivo JSON para comenzar</p>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions align="end" class="dialog-actions">
+        <button mat-stroked-button (click)="onCancel()" [disabled]="isUploading">
+            <mat-icon>cancel</mat-icon> Cancelar
+        </button>
+        <button mat-raised-button color="primary" (click)="onUpload()"
+                [disabled]="questions.length === 0 || isUploading">
+            <mat-spinner *ngIf="isUploading" diameter="20"></mat-spinner>
+            <mat-icon *ngIf="!isUploading">upload</mat-icon>
+            {{ isUploading ? 'Subiendo...' : 'Subir Preguntas' }}
+        </button>
+    </mat-dialog-actions>
+</div>
+

@@ -7,9 +7,16 @@ import {
   SubtopicsResponse,
   TopicStats,
   CreateTopicRequest,
+  CreateTopicFormData,
+  CreateSubtopicFormData,
   UpdateTopicRequest,
   ToggleTopicRequest,
   TogglePremiumRequest,
+  SourceTopicInfo,
+  CopyQuestionsRequest,
+  CopyQuestionsResponse,
+  UploadQuestionsRequest,
+  UploadQuestionsResponse,
 } from '../../../core/models/topic.model';
 import { TopicFilters } from '../../../core/models/api.model';
 import { environment } from '../../../../environments/environment';
@@ -56,7 +63,7 @@ export class TopicService {
   /**
    * Crea un nuevo topic
    */
-  createTopic(topicData: CreateTopicRequest): Observable<Topic> {
+  createTopic(topicData: CreateTopicFormData): Observable<Topic> {
     return this.http.post<Topic>(`${this.API_URL}/admin/topics`, topicData);
   }
 
@@ -210,5 +217,50 @@ export class TopicService {
       misc: 'folder_special',
     };
     return icons[type] || 'topic';
+  }
+
+  /**
+   * Obtiene temas disponibles de otras áreas como fuente de preguntas
+   */
+  getAvailableSourceTopics(topicId: number): Observable<SourceTopicInfo[]> {
+    return this.http.get<SourceTopicInfo[]>(
+      `${this.API_URL}/admin/topics/${topicId}/available-sources`
+    );
+  }
+
+  /**
+   * Copia preguntas desde temas origen al tema destino
+   */
+  copyQuestionsFromTopics(
+    topicId: number,
+    request: CopyQuestionsRequest
+  ): Observable<CopyQuestionsResponse> {
+    return this.http.post<CopyQuestionsResponse>(
+      `${this.API_URL}/admin/topics/${topicId}/copy-questions`,
+      request
+    );
+  }
+
+  /**
+   * Sube preguntas desde un JSON a un topic específico
+   */
+  uploadQuestionsToTopic(
+    topicId: number,
+    request: UploadQuestionsRequest
+  ): Observable<UploadQuestionsResponse> {
+    return this.http.post<UploadQuestionsResponse>(
+      `${this.API_URL}/admin/topics/${topicId}/upload-questions`,
+      request
+    );
+  }
+
+  /**
+   * Crea un nuevo subtopic bajo un topic principal
+   */
+  createSubtopic(parentTopicId: number, subtopicData: CreateSubtopicFormData): Observable<Topic> {
+    return this.http.post<Topic>(
+      `${this.API_URL}/admin/topics/${parentTopicId}/subtopics`,
+      subtopicData
+    );
   }
 }

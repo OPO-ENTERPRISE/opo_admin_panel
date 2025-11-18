@@ -384,34 +384,82 @@ button[mat-icon-button] {
 /* Type filters */
 .type-filters-container {
   margin: 20px 0;
-  padding: 16px;
-  background-color: #f5f5f5;
-  border-radius: 8px;
+  padding: 20px;
+  background-color: #343232;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+  ::ng-deep button.mat-mdc-button.type-filter-button {
+    transition: all 0.3s ease !important;
+    border: 2px solid #bdbdbd !important;
+    background-color: #fafafa !important;
+    color: #424242 !important;
+    font-weight: 500 !important;
+    min-height: 42px !important;
+    padding: 0 20px !important;
+    border-radius: 8px !important;
+
+    .mat-mdc-button-persistent-ripple {
+      display: none !important;
+    }
+
+    &:hover {
+      background-color: #f5f5f5 !important;
+      border-color: #3f51b5 !important;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15) !important;
+      color: #3f51b5 !important;
+
+      mat-icon {
+        color: #3f51b5 !important;
+      }
+    }
+
+    &.active {
+      font-weight: 600 !important;
+      background-color: #3f51b5 !important;
+      color: #ffffff !important;
+      border-color: #3f51b5 !important;
+      box-shadow: 0 2px 8px rgba(63, 81, 181, 0.4) !important;
+
+      mat-icon {
+        color: #ffffff !important;
+      }
+    }
+
+    mat-icon {
+      margin-right: 6px !important;
+      font-size: 20px !important;
+      width: 20px !important;
+      height: 20px !important;
+      transition: color 0.3s ease !important;
+    }
+  }
+
+  // Para botones con color primary cuando están activos
+  ::ng-deep button.mat-mdc-button.type-filter-button.active[color="primary"] {
+    background-color: #3f51b5 !important;
+    color: #ffffff !important;
+    border-color: #3f51b5 !important;
+
+    mat-icon {
+      color: #ffffff !important;
+    }
+  }
 }
 
 .type-filters-title {
-  margin: 0 0 12px 0;
-  font-size: 14px;
-  font-weight: 500;
-  color: rgba(0, 0, 0, 0.6);
+  margin: 0 0 16px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #212121;
 }
 
 .type-filters-buttons {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
-}
-
-.type-filter-button {
-  transition: all 0.3s ease;
-
-  &.active {
-    font-weight: 500;
-  }
-
-  mat-icon {
-    margin-right: 4px;
-  }
 }
 
 /* Type chips in table */

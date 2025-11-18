@@ -23,6 +23,8 @@ import { TopicService } from '../../services/topic.service';
 import { Topic, SubtopicsResponse } from '../../../../core/models/topic.model';
 import { AreaService } from '../../../../core/services/area.service';
 import { IArea } from '../../../../core/models/area.model';
+import { AddQuestionsDialogComponent } from '../../components/add-questions-dialog/add-questions-dialog.component';
+import { UploadQuestionsDialogComponent } from '../../components/upload-questions-dialog/upload-questions-dialog.component';
 
 @Component({
   selector: 'app-topic-detail',
@@ -277,6 +279,72 @@ export class TopicDetailComponent implements OnInit, OnDestroy {
         },
       });
   }
+
+  onAddQuestions(): void {
+    if (!this.topic) return;
+
+    const dialogRef = this.dialog.open(AddQuestionsDialogComponent, {
+      width: '900px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      data: {
+        topicId: this.topic.id,
+        topicTitle: this.topic.title,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        // Questions were successfully copied
+        this.snackBar.open('Preguntas copiadas exitosamente', 'Cerrar', {
+          duration: 3000,
+        });
+        // Optionally reload topic data or refresh the view
+      }
+    });
+  }
+
+  onUploadQuestions(): void {
+    if (!this.topic) return;
+
+    const dialogRef = this.dialog.open(UploadQuestionsDialogComponent, {
+      width: '900px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      data: {
+        topic: this.topic,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        // Questions were successfully uploaded
+        this.snackBar.open('Preguntas subidas exitosamente', 'Cerrar', {
+          duration: 3000,
+        });
+        // Optionally reload topic data or refresh the view
+      }
+    });
+  }
+
+  onCreateSubtopic(): void {
+    if (!this.topic) return;
+
+    const dialogRef = this.dialog.open(SubtopicCreateDialog, {
+      width: '600px',
+      data: { parentTopic: this.topic },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        // Refrescar la lista de subtopics
+        this.loadSubtopics();
+        this.snackBar.open('Subtema creado exitosamente', 'Cerrar', {
+          duration: 3000,
+        });
+      }
+    });
+  }
 }
 
 // ========== Diálogo para editar subtema ==========
@@ -451,5 +519,174 @@ export class SubtopicEditDialog {
 
   get order() {
     return this.editForm.get('order');
+  }
+}
+
+// ========== Diálogo para crear subtema ==========
+
+@Component({
+  selector: 'subtopic-create-dialog',
+  template: `
+    <div class="dialog-container">
+      <h2 mat-dialog-title><mat-icon>add_circle</mat-icon> Crear Subtema</h2>
+      <mat-dialog-content>
+        <form [formGroup]="createForm" class="create-form">
+          <!-- Title Field -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Título</mat-label>
+            <input
+              matInput
+              formControlName="title"
+              placeholder="Ingrese el título del subtema"
+              style="color: #000 !important;"
+            />
+            <mat-icon matPrefix>title</mat-icon>
+            <mat-error *ngIf="title?.hasError('required')">El título es requerido</mat-error>
+            <mat-error *ngIf="title?.hasError('minlength')"
+              >El título debe tener al menos 3 caracteres</mat-error
+            >
+            <mat-error *ngIf="title?.hasError('maxlength')"
+              >El título no puede exceder 200 caracteres</mat-error
+            >
+          </mat-form-field>
+
+          <!-- Order Field -->
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Orden</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="order"
+              placeholder="Orden de visualización"
+              style="color: #000 !important;"
+            />
+            <mat-icon matPrefix>sort</mat-icon>
+            <mat-error *ngIf="order?.hasError('required')">El orden es requerido</mat-error>
+            <mat-error *ngIf="order?.hasError('min')"
+              >El orden debe ser mayor o igual a 0</mat-error
+            >
+            <mat-error *ngIf="order?.hasError('max')">El orden no puede exceder 9999</mat-error>
+          </mat-form-field>
+        </form>
+      </mat-dialog-content>
+      <mat-dialog-actions align="end">
+        <button mat-stroked-button (click)="onCancel()" [disabled]="isSaving">
+          <mat-icon>cancel</mat-icon> Cancelar
+        </button>
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="onCreate()"
+          [disabled]="createForm.invalid || isSaving"
+        >
+          <mat-spinner *ngIf="isSaving" diameter="20"></mat-spinner>
+          <mat-icon *ngIf="!isSaving">add</mat-icon>
+          {{ isSaving ? 'Creando...' : 'Crear Subtema' }}
+        </button>
+      </mat-dialog-actions>
+    </div>
+  `,
+  styles: [
+    `
+      .dialog-container {
+        min-width: 500px;
+      }
+
+      h2 {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+      }
+
+      .create-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding: 16px 0;
+      }
+
+      .full-width {
+        width: 100%;
+      }
+
+      mat-dialog-actions {
+        gap: 8px;
+        padding: 16px 0 0 0;
+      }
+
+      button {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+    `,
+  ],
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatProgressSpinnerModule,
+  ],
+})
+export class SubtopicCreateDialog {
+  createForm!: FormGroup;
+  isSaving = false;
+
+  constructor(
+    private fb: FormBuilder,
+    private dialogRef: MatDialogRef<SubtopicCreateDialog>,
+    @Inject(MAT_DIALOG_DATA) public data: { parentTopic: Topic },
+    private topicService: TopicService,
+    private snackBar: MatSnackBar
+  ) {
+    // Inicializar el formulario vacío
+    this.createForm = this.fb.group({
+      title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
+      order: [0, [Validators.required, Validators.min(0), Validators.max(9999)]],
+    });
+  }
+
+  onCreate(): void {
+    if (this.createForm.invalid || !this.data.parentTopic) {
+      return;
+    }
+
+    this.isSaving = true;
+
+    const createData = {
+      title: this.createForm.value.title,
+      order: this.createForm.value.order,
+      type: this.data.parentTopic.type || 'topic',
+    };
+
+    this.topicService.createSubtopic(this.data.parentTopic.id, createData).subscribe({
+      next: (newSubtopic) => {
+        this.isSaving = false;
+        this.dialogRef.close(newSubtopic);
+      },
+      error: (error) => {
+        console.error('Error creating subtopic:', error);
+        this.snackBar.open('Error al crear el subtema', 'Cerrar', { duration: 5000 });
+        this.isSaving = false;
+      },
+    });
+  }
+
+  onCancel(): void {
+    this.dialogRef.close();
+  }
+
+  get title() {
+    return this.createForm.get('title');
+  }
+
+  get order() {
+    return this.createForm.get('order');
   }
 }

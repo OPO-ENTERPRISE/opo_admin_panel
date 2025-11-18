@@ -85,6 +85,11 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
       ],
     },
     {
+      label: 'Notificaciones',
+      icon: 'notifications',
+      route: '/notifications',
+    },
+    {
       label: 'Usuarios',
       icon: 'people',
       route: '/users',
@@ -93,6 +98,11 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
       label: 'Base de Datos',
       icon: 'storage',
       route: '/database',
+    },
+    {
+      label: 'IA WORKS',
+      icon: 'psychology',
+      route: '/ia-works',
     },
     {
       label: 'Perfil',

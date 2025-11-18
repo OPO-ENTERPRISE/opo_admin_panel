@@ -298,6 +298,42 @@
   margin: 0;
 }
 
+// ========== Questions Section ==========
+
+.questions-section {
+  margin: 24px 0;
+}
+
+.questions-card {
+  .mat-mdc-card-header {
+    .mat-mdc-card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #1976d2;
+    }
+  }
+
+  .mat-mdc-card-content {
+    p {
+      margin-bottom: 16px;
+      color: #666;
+    }
+
+    .questions-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+  }
+}
+
 /* Chip styling */
 .area-chip {
   font-size: 12px;

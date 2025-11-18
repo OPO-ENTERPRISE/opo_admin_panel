@@ -13,7 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { Subject, takeUntil } from 'rxjs';
 
 import { TopicService } from '../../services/topic.service';
-import { Topic } from '../../../../core/models/topic.model';
+import { Topic, CreateTopicFormData } from '../../../../core/models/topic.model';
 import { AreaService } from '../../../../core/services/area.service';
 import { IArea } from '../../../../core/models/area.model';
 
@@ -77,7 +77,7 @@ export class TopicEditComponent implements OnInit, OnDestroy {
     this.editForm = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
       order: [0, [Validators.required, Validators.min(0), Validators.max(9999)]],
-      area: [1, [Validators.required, Validators.min(1), Validators.max(2)]],
+      area: [1, [Validators.required, Validators.min(1), Validators.max(10)]], // Permitir hasta área 10
       type: ['topic', [Validators.required]],
     });
   }
@@ -118,7 +118,11 @@ export class TopicEditComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          this.availableAreas = response.items;
+          // Filtrar solo áreas con ID numérico válido (1, 2, etc.)
+          this.availableAreas = response.items.filter((area) => {
+            const areaId = parseInt(area.id, 10);
+            return !isNaN(areaId) && areaId >= 1 && areaId <= 10; // Permitir hasta área 10
+          });
           this.isLoadingAreas = false;
         },
         error: (error) => {
@@ -133,36 +137,62 @@ export class TopicEditComponent implements OnInit, OnDestroy {
   }
 
   onSubmit(): void {
-    if (this.editForm.invalid || !this.topicId || !this.topic) {
+    if (this.editForm.invalid) {
       return;
     }
 
     this.isSaving = true;
 
-    // Crear el objeto de actualización con todos los campos necesarios
-    const updateData: Topic = {
-      ...this.topic,
-      title: this.editForm.value.title,
-      order: this.editForm.value.order,
-      area: this.editForm.value.area,
-      type: this.editForm.value.type,
-    };
+    if (this.topicId && this.topic) {
+      // Modo edición
+      const updateData: Topic = {
+        ...this.topic,
+        title: this.editForm.value.title,
+        order: this.editForm.value.order,
+        area: this.editForm.value.area,
+        type: this.editForm.value.type,
+      };
 
-    this.topicService
-      .updateTopic(this.topicId, updateData)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (updatedTopic) => {
-          this.snackBar.open('Topic actualizado exitosamente', 'Cerrar', { duration: 3000 });
-          this.isSaving = false;
-          this.router.navigate(['/topics']);
-        },
-        error: (error) => {
-          console.error('Error updating topic:', error);
-          this.snackBar.open('Error al actualizar el topic', 'Cerrar', { duration: 5000 });
-          this.isSaving = false;
-        },
-      });
+      this.topicService
+        .updateTopic(this.topicId, updateData)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (updatedTopic) => {
+            this.snackBar.open('Topic actualizado exitosamente', 'Cerrar', { duration: 3000 });
+            this.isSaving = false;
+            this.router.navigate(['/topics']);
+          },
+          error: (error) => {
+            console.error('Error updating topic:', error);
+            this.snackBar.open('Error al actualizar el topic', 'Cerrar', { duration: 5000 });
+            this.isSaving = false;
+          },
+        });
+    } else {
+      // Modo creación
+      const createData: CreateTopicFormData = {
+        title: this.editForm.value.title,
+        order: this.editForm.value.order,
+        area: this.editForm.value.area,
+        type: this.editForm.value.type,
+      };
+
+      this.topicService
+        .createTopic(createData)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: (newTopic) => {
+            this.snackBar.open('Topic creado exitosamente', 'Cerrar', { duration: 3000 });
+            this.isSaving = false;
+            this.router.navigate(['/topics']);
+          },
+          error: (error) => {
+            console.error('Error creating topic:', error);
+            this.snackBar.open('Error al crear el topic', 'Cerrar', { duration: 5000 });
+            this.isSaving = false;
+          },
+        });
+    }
   }
 
   onCancel(): void {

@@ -65,6 +65,7 @@ export class TopicListComponent implements OnInit, OnDestroy {
   currentPage = 1;
   pageSize = 20;
   pageSizeOptions = [10, 20, 50, 100];
+  private readonly PAGE_SIZE_STORAGE_KEY = 'topic_list_page_size';
 
   // Table columns
   displayedColumns: string[] = [
@@ -113,6 +114,7 @@ export class TopicListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.loadPageSizeFromStorage();
     this.loadAreas();
     this.setupFilters();
     this.loadTopics();
@@ -122,6 +124,21 @@ export class TopicListComponent implements OnInit, OnDestroy {
       this.currentPage = 1;
       this.loadTopics();
     });
+  }
+
+  private loadPageSizeFromStorage(): void {
+    const savedPageSize = localStorage.getItem(this.PAGE_SIZE_STORAGE_KEY);
+    if (savedPageSize) {
+      const parsedSize = parseInt(savedPageSize, 10);
+      // Verificar que el valor guardado esté en las opciones válidas
+      if (this.pageSizeOptions.includes(parsedSize)) {
+        this.pageSize = parsedSize;
+      }
+    }
+  }
+
+  private savePageSizeToStorage(): void {
+    localStorage.setItem(this.PAGE_SIZE_STORAGE_KEY, this.pageSize.toString());
   }
 
   private loadAreas(): void {
@@ -227,6 +244,7 @@ export class TopicListComponent implements OnInit, OnDestroy {
   onPageChange(event: PageEvent): void {
     this.currentPage = event.pageIndex + 1;
     this.pageSize = event.pageSize;
+    this.savePageSizeToStorage();
     this.loadTopics();
   }
 

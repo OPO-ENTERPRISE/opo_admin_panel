@@ -1,0 +1,180 @@
+<div class="convert-vector-container">
+  <mat-card class="upload-card">
+    <mat-card-header>
+      <mat-card-title>Subir y Convertir Archivo</mat-card-title>
+      <mat-card-subtitle>Sube un archivo PDF, Word o TXT para convertirlo a texto plano</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <!-- Upload Area -->
+      <div
+        class="upload-area"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave($event)"
+        (drop)="onDrop($event)"
+        [class.drag-over]="false"
+      >
+        <input
+          type="file"
+          #fileInput
+          (change)="onFileSelected($event)"
+          accept=".pdf,.docx,.doc,.txt"
+          style="display: none"
+        />
+        <div class="upload-content">
+          <mat-icon class="upload-icon">{{ getFileIcon() }}</mat-icon>
+          <p class="upload-text">
+            <span *ngIf="!selectedFile">Arrastra un archivo aquí o haz clic para seleccionar</span>
+            <span *ngIf="selectedFile">{{ selectedFile.name }}</span>
+          </p>
+          <button mat-raised-button color="primary" (click)="fileInput.click()">
+            Seleccionar Archivo
+          </button>
+        </div>
+      </div>
+
+      <div class="upload-actions" *ngIf="selectedFile && !uploadResponse">
+        <button mat-raised-button color="primary" (click)="uploadFile()" [disabled]="isUploading">
+          <mat-spinner diameter="20" *ngIf="isUploading" class="inline-spinner"></mat-spinner>
+          <span *ngIf="!isUploading">Convertir Archivo</span>
+          <span *ngIf="isUploading">Convirtiendo...</span>
+        </button>
+      </div>
+
+      <!-- Upload Response -->
+      <div *ngIf="uploadResponse" class="upload-response">
+        <mat-chip-set>
+          <mat-chip color="primary" highlighted>Archivo convertido: {{ uploadResponse.fileName }}</mat-chip>
+        </mat-chip-set>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Preview -->
+  <mat-card class="preview-card" *ngIf="showPreview && previewText">
+    <mat-card-header>
+      <mat-card-title>Vista Previa del Texto</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="preview-text">{{ previewText }}</div>
+      <p class="text-info">Caracteres: {{ previewText.length }}</p>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Embedding Configuration -->
+  <mat-card class="config-card" *ngIf="uploadResponse">
+    <mat-card-header>
+      <mat-card-title>Configuración de Embeddings</mat-card-title>
+      <mat-card-subtitle>Configura cómo se generarán los vectores del documento</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="embeddingConfigForm">
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Chunk Size</mat-label>
+            <input matInput type="number" formControlName="chunkSize" min="100" max="2000" />
+            <mat-hint>Tamaño de cada fragmento (100-2000 caracteres)</mat-hint>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Overlap</mat-label>
+            <input matInput type="number" formControlName="overlap" min="0" max="500" />
+            <mat-hint>Superposición entre fragmentos (0-500 caracteres)</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Modelo de Embedding</mat-label>
+            <mat-select formControlName="embeddingModel">
+              <mat-option value="openai">OpenAI</mat-option>
+              <mat-option value="huggingface">Hugging Face</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Estrategia de Chunking</mat-label>
+            <mat-select formControlName="chunkingStrategy">
+              <mat-option value="characters">Por Caracteres</mat-option>
+              <mat-option value="paragraphs">Por Párrafos</mat-option>
+              <mat-option value="sections">Por Secciones</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <mat-expansion-panel>
+          <mat-expansion-panel-header>
+            <mat-panel-title>API Keys (Opcional)</mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="form-field-full">
+              <mat-label>OpenAI API Key</mat-label>
+              <input matInput type="password" formControlName="openaiApiKey" />
+              <mat-hint>Dejar vacío si ya está configurado en el servidor</mat-hint>
+            </mat-form-field>
+          </div>
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="form-field-full">
+              <mat-label>Hugging Face API Key</mat-label>
+              <input matInput type="password" formControlName="huggingFaceApiKey" />
+              <mat-hint>Dejar vacío si ya está configurado en el servidor</mat-hint>
+            </mat-form-field>
+          </div>
+        </mat-expansion-panel>
+      </form>
+
+      <mat-divider class="divider"></mat-divider>
+
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>Metadata Personalizada (Opcional)</mat-panel-title>
+        </mat-expansion-panel-header>
+        <form [formGroup]="metadataForm">
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>Título</mat-label>
+              <input matInput formControlName="title" />
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="form-field">
+              <mat-label>Categoría</mat-label>
+              <input matInput formControlName="category" />
+            </mat-form-field>
+          </div>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="form-field-full">
+              <mat-label>Tags (separados por comas)</mat-label>
+              <input matInput formControlName="tags" />
+              <mat-hint>Ejemplo: tag1, tag2, tag3</mat-hint>
+            </mat-form-field>
+          </div>
+        </form>
+      </mat-expansion-panel>
+
+      <div class="process-actions">
+        <button
+          mat-raised-button
+          color="accent"
+          (click)="processToVector()"
+          [disabled]="isProcessing || embeddingConfigForm.invalid"
+        >
+          <mat-spinner diameter="20" *ngIf="isProcessing" class="inline-spinner"></mat-spinner>
+          <span *ngIf="!isProcessing">Procesar a Vectores</span>
+          <span *ngIf="isProcessing">Procesando...</span>
+        </button>
+
+        <button mat-button (click)="resetForm()">Nuevo Documento</button>
+      </div>
+
+      <!-- Process Response -->
+      <div *ngIf="processResponse" class="process-response">
+        <mat-chip-set>
+          <mat-chip color="accent" highlighted>
+            Procesado: {{ processResponse.chunksCount }} chunks generados
+          </mat-chip>
+        </mat-chip-set>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
