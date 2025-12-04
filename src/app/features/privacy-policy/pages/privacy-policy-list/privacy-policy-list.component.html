@@ -1,0 +1,117 @@
+<div class="privacy-policy-list-container">
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <mat-icon>privacy_tip</mat-icon>
+        Políticas de Privacidad
+      </h1>
+      <p class="page-subtitle">
+        Administra las políticas de privacidad para cada área (PN/PS)
+      </p>
+    </div>
+    <button mat-raised-button color="primary" (click)="onCreatePolicy()" class="create-button">
+      <mat-icon>add</mat-icon>
+      Nueva Política
+    </button>
+  </div>
+
+  <!-- Policies Table -->
+  <mat-card class="table-card">
+    <mat-card-content>
+      <!-- Loading Spinner -->
+      <div class="loading-container" *ngIf="isLoading">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Cargando políticas...</p>
+      </div>
+
+      <!-- Table -->
+      <div class="table-container" *ngIf="!isLoading">
+        <table mat-table [dataSource]="policies" class="policies-table">
+          <!-- Area Column -->
+          <ng-container matColumnDef="area">
+            <th mat-header-cell *matHeaderCellDef>Área</th>
+            <td mat-cell *matCellDef="let policy">
+              <mat-chip-set>
+                <mat-chip [class]="'area-chip ' + (policy.area === 1 ? 'pn-chip' : 'ps-chip')">
+                  {{ getAreaName(policy.area) }}
+                </mat-chip>
+              </mat-chip-set>
+            </td>
+          </ng-container>
+
+          <!-- Created At Column -->
+          <ng-container matColumnDef="createdAt">
+            <th mat-header-cell *matHeaderCellDef>Fecha de Creación</th>
+            <td mat-cell *matCellDef="let policy">
+              {{ formatDate(policy.createdAt) }}
+            </td>
+          </ng-container>
+
+          <!-- Updated At Column -->
+          <ng-container matColumnDef="updatedAt">
+            <th mat-header-cell *matHeaderCellDef>Última Actualización</th>
+            <td mat-cell *matCellDef="let policy">
+              {{ formatDate(policy.updatedAt) }}
+            </td>
+          </ng-container>
+
+          <!-- Public URL Column -->
+          <ng-container matColumnDef="publicUrl">
+            <th mat-header-cell *matHeaderCellDef>Enlace público</th>
+            <td mat-cell *matCellDef="let policy">
+              <a
+                [href]="getPublicUrl(policy)"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {{ getPublicUrl(policy) }}
+              </a>
+            </td>
+          </ng-container>
+
+          <!-- Actions Column -->
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef>Acciones</th>
+            <td mat-cell *matCellDef="let policy">
+              <div class="actions-container">
+                <button
+                  mat-icon-button
+                  matTooltip="Editar"
+                  (click)="onEditPolicy(policy)"
+                  color="primary"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  matTooltip="Eliminar"
+                  (click)="onDeletePolicy(policy)"
+                  color="warn"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="policies.length === 0">
+          <mat-icon>privacy_tip</mat-icon>
+          <p>No hay políticas de privacidad creadas</p>
+          <button mat-raised-button color="primary" (click)="onCreatePolicy()">
+            <mat-icon>add</mat-icon>
+            Crear primera política
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+
+

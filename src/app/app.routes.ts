@@ -156,6 +156,27 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/ia-works/ia-works.component').then((m) => m.IaWorksComponent),
       },
+      {
+        path: 'privacy-policies',
+        loadComponent: () =>
+          import('./features/privacy-policy/pages/privacy-policy-list/privacy-policy-list.component').then(
+            (m) => m.PrivacyPolicyListComponent
+          ),
+      },
+      {
+        path: 'privacy-policies/new',
+        loadComponent: () =>
+          import('./features/privacy-policy/pages/privacy-policy-form/privacy-policy-form.component').then(
+            (m) => m.PrivacyPolicyFormComponent
+          ),
+      },
+      {
+        path: 'privacy-policies/edit/:areaId',
+        loadComponent: () =>
+          import('./features/privacy-policy/pages/privacy-policy-form/privacy-policy-form.component').then(
+            (m) => m.PrivacyPolicyFormComponent
+          ),
+      },
     ],
   },
   {
