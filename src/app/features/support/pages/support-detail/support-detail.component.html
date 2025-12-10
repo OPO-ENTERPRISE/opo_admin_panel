@@ -1,0 +1,45 @@
+<mat-card *ngIf="conversation && !loading; else loadingTpl">
+  <mat-card-title>{{ conversation.title }}</mat-card-title>
+  <mat-card-subtitle>
+    {{ conversation.userEmail || 'Usuario' }} · Estado: {{ conversation.status }}
+  </mat-card-subtitle>
+
+  <div class="meta">
+    <div>ID: {{ conversation.id }}</div>
+    <div>Actualizado: {{ conversation.lastUpdated | date: 'short' }}</div>
+  </div>
+
+  <div class="messages">
+    <div class="message" *ngFor="let msg of conversation.messages; trackBy: trackByMsg" [class.from-admin]="msg.sender === 'admin'">
+      <div class="message-header">
+        <span class="sender">{{ msg.sender === 'admin' ? 'Soporte' : 'Usuario' }}</span>
+        <span class="timestamp">{{ msg.createdAt | date: 'short' }}</span>
+      </div>
+      <div class="message-body">
+        {{ msg.message }}
+      </div>
+    </div>
+  </div>
+
+  <div class="reply-box">
+    <mat-form-field class="full-width" appearance="outline">
+      <mat-label>Responder</mat-label>
+      <textarea matInput rows="3" [(ngModel)]="replyMessage" placeholder="Escribe tu respuesta"></textarea>
+    </mat-form-field>
+    <div class="actions">
+      <button mat-stroked-button color="primary" (click)="goBack()">Volver</button>
+      <button mat-flat-button color="primary" (click)="sendReply()" [disabled]="sending || !replyMessage.trim()">
+        <mat-progress-spinner *ngIf="sending" diameter="16" mode="indeterminate"></mat-progress-spinner>
+        <span>Enviar</span>
+      </button>
+    </div>
+  </div>
+</mat-card>
+
+<ng-template #loadingTpl>
+  <div class="loading">
+    <mat-progress-spinner diameter="32" mode="indeterminate"></mat-progress-spinner>
+    <span>Cargando conversación...</span>
+  </div>
+</ng-template>
+

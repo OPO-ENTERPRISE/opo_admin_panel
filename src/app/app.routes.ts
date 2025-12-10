@@ -138,6 +138,20 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'support',
+        loadComponent: () =>
+          import('./features/support/pages/support-list/support-list.component').then(
+            (m) => m.SupportListComponent
+          ),
+      },
+      {
+        path: 'support/:id',
+        loadComponent: () =>
+          import('./features/support/pages/support-detail/support-detail.component').then(
+            (m) => m.SupportDetailComponent
+          ),
+      },
+      {
         path: 'notifications/new',
         loadComponent: () =>
           import('./features/notifications/pages/notification-form/notification-form.component').then(

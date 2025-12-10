@@ -1,0 +1,58 @@
+.toolbar {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin: 12px 0;
+}
+
+.table-wrapper {
+  overflow: auto;
+}
+
+.full-width-table {
+  width: 100%;
+}
+
+.title {
+  font-weight: 600;
+}
+
+.meta {
+  font-size: 12px;
+  color: #64748b;
+}
+
+.chip {
+  padding: 4px 8px;
+  border-radius: 8px;
+  text-transform: capitalize;
+}
+
+.chip.open {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.chip.closed {
+  background: #fce7f3;
+  color: #9d174d;
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 8px;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 12px;
+}
+
+.empty,
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+  color: #64748b;
+}
+

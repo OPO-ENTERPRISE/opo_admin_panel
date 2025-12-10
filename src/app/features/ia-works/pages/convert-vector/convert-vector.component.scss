@@ -7,6 +7,7 @@
 
 .upload-card,
 .preview-card,
+.ai-response-card,
 .config-card {
   width: 100%;
 }
@@ -115,5 +116,47 @@
 
 mat-expansion-panel {
   margin-bottom: 16px;
+}
+
+.metadata-section {
+  margin-bottom: 16px;
+
+  h3 {
+    margin: 0 0 8px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+}
+
+.paragraphs-accordion {
+  margin-bottom: 16px;
+}
+
+.paragraph-content {
+  white-space: pre-wrap;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.paragraph-summary {
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+.raw-json-panel pre {
+  background-color: #0f172a;
+  color: #e2e8f0;
+  padding: 16px;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.no-paragraphs {
+  margin: 0;
+  color: #757575;
+  font-size: 14px;
 }
 

@@ -19,6 +19,7 @@ import {
   EmbeddingConfig,
   UploadFileResponse,
   ProcessVectorResponse,
+  DocumentParagraph,
 } from '../../models/embedding-config.model';
 
 @Component({
@@ -56,6 +57,9 @@ export class ConvertVectorComponent implements OnInit {
 
   previewText = '';
   showPreview = false;
+  deepSeekParagraphs: DocumentParagraph[] = [];
+  metadataEntries: Array<{ key: string; value: string }> = [];
+  paragraphsJson = '';
 
   constructor(
     private fb: FormBuilder,
@@ -75,6 +79,7 @@ export class ConvertVectorComponent implements OnInit {
       chunkingStrategy: ['characters', Validators.required],
       openaiApiKey: [''],
       huggingFaceApiKey: [''],
+      deepseekApiKey: [''],
     });
 
     this.metadataForm = this.fb.group({
@@ -192,6 +197,7 @@ export class ConvertVectorComponent implements OnInit {
       chunkingStrategy: this.embeddingConfigForm.value.chunkingStrategy,
       openaiApiKey: this.embeddingConfigForm.value.openaiApiKey || undefined,
       huggingFaceApiKey: this.embeddingConfigForm.value.huggingFaceApiKey || undefined,
+      deepseekApiKey: this.embeddingConfigForm.value.deepseekApiKey || undefined,
       metadata: {
         title: this.metadataForm.value.title || undefined,
         category: this.metadataForm.value.category || undefined,
@@ -217,6 +223,11 @@ export class ConvertVectorComponent implements OnInit {
       .subscribe({
         next: (response) => {
           this.processResponse = response;
+          this.deepSeekParagraphs = response.paragraphs ?? [];
+          this.metadataEntries = this.buildMetadataEntries(response.metadata);
+          this.paragraphsJson = this.deepSeekParagraphs.length
+            ? JSON.stringify(this.deepSeekParagraphs, null, 2)
+            : '';
           this.isProcessing = false;
           this.snackBar.open(
             `Procesamiento completado: ${response.chunksCount} chunks generados`,
@@ -247,6 +258,9 @@ export class ConvertVectorComponent implements OnInit {
       chunkingStrategy: 'characters',
     });
     this.metadataForm.reset();
+    this.deepSeekParagraphs = [];
+    this.metadataEntries = [];
+    this.paragraphsJson = '';
   }
 
   getFileIcon(): string {
@@ -256,6 +270,19 @@ export class ConvertVectorComponent implements OnInit {
     if (ext === '.docx' || ext === '.doc') return 'description';
     if (ext === '.txt') return 'text_snippet';
     return 'insert_drive_file';
+  }
+
+  private buildMetadataEntries(metadata?: Record<string, any> | null): Array<{ key: string; value: string }> {
+    if (!metadata) {
+      return [];
+    }
+
+    return Object.entries(metadata)
+      .map(([key, value]) => ({
+        key,
+        value: typeof value === 'string' ? value : JSON.stringify(value),
+      }))
+      .filter((entry) => entry.value && entry.value.trim() !== '');
   }
 }
 

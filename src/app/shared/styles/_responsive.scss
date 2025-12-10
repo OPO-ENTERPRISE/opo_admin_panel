@@ -1,0 +1,151 @@
+@use 'sass:math';
+
+// Viewport anchors
+$min-viewport: 320px;
+$max-viewport: 1280px;
+
+// Breakpoints
+$screen-xs: 360px;
+$screen-sm: 480px;
+$screen-md: 768px;
+$screen-lg: 1024px;
+$screen-xl: 1280px;
+
+:root {
+  --screen-xs: #{$screen-xs};
+  --screen-sm: #{$screen-sm};
+  --screen-md: #{$screen-md};
+  --screen-lg: #{$screen-lg};
+  --screen-xl: #{$screen-xl};
+}
+
+@mixin fluid-prop($property, $min, $max, $min-vw: $min-viewport, $max-vw: $max-viewport) {
+  #{$property}: clamp(
+    $min,
+    calc(#{$min} + (#{$max} - #{$min}) * ((100vw - #{$min-vw}) / (#{$max-vw - $min-vw}))),
+    $max
+  );
+}
+
+@mixin fluid-type($min, $max, $min-vw: $min-viewport, $max-vw: $max-viewport) {
+  @include fluid-prop(font-size, $min, $max, $min-vw, $max-vw);
+}
+
+@mixin fluid-space($property, $min, $max, $min-vw: $min-viewport, $max-vw: $max-viewport) {
+  @include fluid-prop($property, $min, $max, $min-vw, $max-vw);
+}
+
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == xs {
+    @media (max-width: $screen-xs) { @content; }
+  } @else if $breakpoint == sm {
+    @media (max-width: $screen-sm) { @content; }
+  } @else if $breakpoint == md {
+    @media (max-width: $screen-md) { @content; }
+  } @else if $breakpoint == lg {
+    @media (max-width: $screen-lg) { @content; }
+  } @else if $breakpoint == xl {
+    @media (max-width: $screen-xl) { @content; }
+  }
+}
+@use 'sass:math';
+
+// Viewport anchors
+$min-viewport: 320px;
+$max-viewport: 1280px;
+
+// Breakpoints
+$screen-xs: 360px;
+$screen-sm: 480px;
+$screen-md: 768px;
+$screen-lg: 1024px;
+$screen-xl: 1280px;
+
+:root {
+  --screen-xs: #{$screen-xs};
+  --screen-sm: #{$screen-sm};
+  --screen-md: #{$screen-md};
+  --screen-lg: #{$screen-lg};
+  --screen-xl: #{$screen-xl};
+}
+
+@mixin fluid-prop($property, $min, $max, $min-vw: $min-viewport, $max-vw: $max-viewport) {
+  #{$property}: clamp(
+    $min,
+    calc(#{$min} + (#{$max} - #{$min}) * ((100vw - #{$min-vw}) / (#{$max-vw - $min-vw}))),
+    $max
+  );
+}
+
+@mixin fluid-type($min, $max, $min-vw: $min-viewport, $max-vw: $max-viewport) {
+  @include fluid-prop(font-size, $min, $max, $min-vw, $max-vw);
+}
+
+@mixin fluid-space($property, $min, $max, $min-vw: $min-viewport, $max-vw: $max-viewport) {
+  @include fluid-prop($property, $min, $max, $min-vw, $max-vw);
+}
+
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == xs {
+    @media (max-width: $screen-xs) { @content; }
+  } @else if $breakpoint == sm {
+    @media (max-width: $screen-sm) { @content; }
+  } @else if $breakpoint == md {
+    @media (max-width: $screen-md) { @content; }
+  } @else if $breakpoint == lg {
+    @media (max-width: $screen-lg) { @content; }
+  } @else if $breakpoint == xl {
+    @media (max-width: $screen-xl) { @content; }
+  }
+}
+@use 'sass:math';
+
+// Viewport anchors
+$min-viewport: 320px;
+$max-viewport: 1280px;
+
+// Breakpoints
+$screen-xs: 360px;
+$screen-sm: 480px;
+$screen-md: 768px;
+$screen-lg: 1024px;
+$screen-xl: 1280px;
+
+:root {
+  --screen-xs: #{$screen-xs};
+  --screen-sm: #{$screen-sm};
+  --screen-md: #{$screen-md};
+  --screen-lg: #{$screen-lg};
+  --screen-xl: #{$screen-xl};
+}
+
+@mixin fluid-prop($property, $min, $max, $min-vw: $min-viewport, $max-vw: $max-viewport) {
+  #{$property}: clamp(
+    $min,
+    calc(#{$min} + (#{$max} - #{$min}) * ((100vw - #{$min-vw}) / (#{$max-vw - $min-vw}))),
+    $max
+  );
+}
+
+@mixin fluid-type($min, $max, $min-vw: $min-viewport, $max-vw: $max-viewport) {
+  @include fluid-prop(font-size, $min, $max, $min-vw, $max-vw);
+}
+
+@mixin fluid-space($property, $min, $max, $min-vw: $min-viewport, $max-vw: $max-viewport) {
+  @include fluid-prop($property, $min, $max, $min-vw, $max-vw);
+}
+
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == xs {
+    @media (max-width: $screen-xs) { @content; }
+  } @else if $breakpoint == sm {
+    @media (max-width: $screen-sm) { @content; }
+  } @else if $breakpoint == md {
+    @media (max-width: $screen-md) { @content; }
+  } @else if $breakpoint == lg {
+    @media (max-width: $screen-lg) { @content; }
+  } @else if $breakpoint == xl {
+    @media (max-width: $screen-xl) { @content; }
+  }
+}
+

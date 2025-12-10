@@ -60,6 +60,59 @@
     </mat-card-content>
   </mat-card>
 
+  <!-- IA Response -->
+  <mat-card class="ai-response-card" *ngIf="processResponse">
+    <mat-card-header>
+      <mat-card-title>Respuesta de la IA</mat-card-title>
+      <mat-card-subtitle *ngIf="deepSeekParagraphs.length">
+        {{ deepSeekParagraphs.length }} párrafos generados por DeepSeek
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <section class="metadata-section" *ngIf="metadataEntries.length">
+        <h3>Metadata recibida</h3>
+        <mat-chip-set>
+          <mat-chip *ngFor="let entry of metadataEntries">
+            {{ entry.key }}: {{ entry.value }}
+          </mat-chip>
+        </mat-chip-set>
+      </section>
+
+      <ng-container *ngIf="deepSeekParagraphs.length; else noParagraphs">
+        <mat-accordion class="paragraphs-accordion">
+          <mat-expansion-panel *ngFor="let paragraph of deepSeekParagraphs; let i = index">
+            <mat-expansion-panel-header>
+              <mat-panel-title>Párrafo {{ paragraph.index || i + 1 }}</mat-panel-title>
+              <mat-panel-description>
+                {{ paragraph.summary || 'Sin resumen' }}
+              </mat-panel-description>
+            </mat-expansion-panel-header>
+            <p class="paragraph-content">{{ paragraph.content }}</p>
+            <p class="paragraph-summary" *ngIf="paragraph.summary">
+              <strong>Resumen:</strong> {{ paragraph.summary }}
+            </p>
+            <mat-chip-set *ngIf="paragraph.tags?.length">
+              <mat-chip *ngFor="let tag of paragraph.tags">{{ tag }}</mat-chip>
+            </mat-chip-set>
+          </mat-expansion-panel>
+        </mat-accordion>
+
+        <mat-expansion-panel class="raw-json-panel" *ngIf="paragraphsJson">
+          <mat-expansion-panel-header>
+            <mat-panel-title>JSON crudo</mat-panel-title>
+          </mat-expansion-panel-header>
+          <pre>{{ paragraphsJson }}</pre>
+        </mat-expansion-panel>
+      </ng-container>
+
+      <ng-template #noParagraphs>
+        <p class="no-paragraphs">
+          La IA no devolvió párrafos para este documento. Revisa la configuración o intenta nuevamente.
+        </p>
+      </ng-template>
+    </mat-card-content>
+  </mat-card>
+
   <!-- Embedding Configuration -->
   <mat-card class="config-card" *ngIf="uploadResponse">
     <mat-card-header>
@@ -88,6 +141,7 @@
             <mat-select formControlName="embeddingModel">
               <mat-option value="openai">OpenAI</mat-option>
               <mat-option value="huggingface">Hugging Face</mat-option>
+              <mat-option value="deepseek">DeepSeek</mat-option>
             </mat-select>
           </mat-form-field>
 
@@ -117,6 +171,13 @@
               <mat-label>Hugging Face API Key</mat-label>
               <input matInput type="password" formControlName="huggingFaceApiKey" />
               <mat-hint>Dejar vacío si ya está configurado en el servidor</mat-hint>
+            </mat-form-field>
+          </div>
+          <div class="form-row">
+            <mat-form-field appearance="outline" class="form-field-full">
+              <mat-label>DeepSeek API Key</mat-label>
+              <input matInput type="password" formControlName="deepseekApiKey" />
+              <mat-hint>Permite usar una clave diferente a la configurada en backend</mat-hint>
             </mat-form-field>
           </div>
         </mat-expansion-panel>

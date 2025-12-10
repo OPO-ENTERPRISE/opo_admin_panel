@@ -90,6 +90,11 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
       route: '/notifications',
     },
     {
+      label: 'Mensajes',
+      icon: 'chat',
+      route: '/support',
+    },
+    {
       label: 'Políticas de Privacidad',
       icon: 'privacy_tip',
       route: '/privacy-policies',
