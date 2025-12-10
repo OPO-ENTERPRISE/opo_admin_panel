@@ -17,6 +17,7 @@
   border-radius: 10px;
   padding: 10px 12px;
   background: #f8fafc;
+  color: #111827;
 }
 
 .message.from-admin {
@@ -35,6 +36,7 @@
 .message-body {
   white-space: pre-wrap;
   line-height: 1.4;
+  color: #111827;
 }
 
 .reply-box {
@@ -50,6 +52,15 @@
   justify-content: flex-end;
   gap: 12px;
   align-items: center;
+}
+
+/* Forzar colores dentro de mat-form-field (Angular Material usa shadow DOM) */
+:host ::ng-deep .reply-box .mat-mdc-input-element {
+  color: #111827 !important;
+}
+
+:host ::ng-deep .reply-box .mat-mdc-input-element::placeholder {
+  color: #4b5563 !important;
 }
 
 .loading {
